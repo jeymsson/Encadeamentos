@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import includes.Funcoes;
-
+///eniezio
 public class painel_Inicial {
 
 	private int varProc, varCores, varQuantum;
