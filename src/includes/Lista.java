@@ -83,6 +83,40 @@ public class Lista {
 		}
 		setQtdNos(getQtdNos() +1);
 	}
+	public void push_fim(No no) {
+		No novo = no;
+		if (isEmpty()) {
+			if (getAtivaLogs()) {
+				System.out.println("Lista Vazia, adicionando inicio.");
+			}
+			setHead(novo);
+			setTail(novo);
+		} else {
+			No temp = getTail();
+
+			temp.setNext(novo);;
+			novo.setBack(temp);
+			setTail(novo);
+		}
+		setQtdNos(getQtdNos() +1);
+	}
+	public void push_fim(int Quantum, int Priori) {
+		No novo = new No(Quantum, Priori);
+		if (isEmpty()) {
+			if (getAtivaLogs()) {
+				System.out.println("Lista Vazia, adicionando inicio.");
+			}
+			setHead(novo);
+			setTail(novo);
+		} else {
+			No temp = getTail();
+
+			temp.setNext(novo);;
+			novo.setBack(temp);
+			setTail(novo);
+		}
+		setQtdNos(getQtdNos() +1);
+	}
 	public void push_ini(int Quantum) {
 		No novo = new No(Quantum);
 		if (isEmpty()) {
@@ -301,6 +335,47 @@ public class Lista {
 			}
 		}
 	}
+	public void populaLista(int numNos, boolean usaPrioridade) {
+		if(!isEmpty()) {
+			System.out.println("Já existe algo na arvore");
+		} else {
+			Random random = new Random();
+			int valor, priori;
+			for (int i = 0; i < numNos; i++) {
+				valor = random.nextInt(21);
+				valor = valor < 4 ? 4 : valor;
+				
+				if(usaPrioridade) {
+					priori = random.nextInt(4);
+					push_fim(valor, priori);
+				} else {
+					push_fim(valor);
+				}
+				
+			}
+		}
+	}
+
+	public Lista retornaPriori(int prioridade) {
+		Lista ret = null;
+		if(!isEmpty()) {
+			System.out.println("Já existe algo na arvore");
+		} else {
+			ret = new Lista();
+			No temp = getHead();
+			while (temp.getNext() != null) {
+				if(temp.getPriori() == prioridade) {
+					ret.push_fim(temp);
+				}
+				temp = temp.getNext();
+			}
+			if(temp.getPriori() == prioridade) {
+				ret.push_fim(temp);
+			}
+		}
+		return ret;
+	}
+
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
