@@ -131,13 +131,20 @@ public class No {
 	}
 	public No Entrega() {
 		// TODO Auto-generated method stub
-		No node = new No(getQuantum(), getTempExec(), getPriori());
+		No node = new No();
+		node.setQuantum(getQuantum());
+		node.setTempExec(getTempExec());
+		node.setPriori(getPriori());
 //		setBack(null);
 //		setNext(null);
 		node.setID(getID());
 		node.setEstado(getEstado());
 		node.setRelogio(getRelogio());
 		return node;
+	}
+	public No getHead() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
