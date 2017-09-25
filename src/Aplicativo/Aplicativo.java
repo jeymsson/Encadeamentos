@@ -120,7 +120,7 @@ public class Aplicativo {
 		panel.add(lblNumCores, gbc_lblNumCores);
 		
 		txtNumCores = new JTextField();
-		txtNumCores.setText("2");
+		txtNumCores.setText("4");
 		gbc_txtNumCores.insets = new Insets(0, 0, 5, 5);
 		gbc_txtNumCores.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtNumCores.gridx = 2;
@@ -136,7 +136,7 @@ public class Aplicativo {
 		panel.add(lblNumProcessos, gbc_lblNumProcessos);
 		
 		txtNumProcessos = new JTextField();
-		txtNumProcessos.setText("5");
+		txtNumProcessos.setText("20");
 		gbc_txtNumProcessos.insets = new Insets(0, 0, 5, 5);
 		gbc_txtNumProcessos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtNumProcessos.gridx = 2;
