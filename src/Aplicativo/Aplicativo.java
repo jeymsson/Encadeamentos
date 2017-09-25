@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
@@ -119,6 +120,7 @@ public class Aplicativo {
 		panel.add(lblNumCores, gbc_lblNumCores);
 		
 		txtNumCores = new JTextField();
+		txtNumCores.setText("2");
 		gbc_txtNumCores.insets = new Insets(0, 0, 5, 5);
 		gbc_txtNumCores.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtNumCores.gridx = 2;
@@ -134,6 +136,7 @@ public class Aplicativo {
 		panel.add(lblNumProcessos, gbc_lblNumProcessos);
 		
 		txtNumProcessos = new JTextField();
+		txtNumProcessos.setText("5");
 		gbc_txtNumProcessos.insets = new Insets(0, 0, 5, 5);
 		gbc_txtNumProcessos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtNumProcessos.gridx = 2;
@@ -149,6 +152,7 @@ public class Aplicativo {
 		panel.add(lblDeadline, gbc_lblDeadline);
 		
 		txtDeadline = new JTextField();
+		txtDeadline.setText("3");
 		gbc_txtDeadline.insets = new Insets(0, 0, 5, 5);
 		gbc_txtDeadline.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtDeadline.gridx = 2;
@@ -244,7 +248,12 @@ public class Aplicativo {
 									+ ", Processos: " + Processos
 									+ ", Round Robin com lista de prioridade");
 						}
-						RR robin = new RR(Cores, Processos);
+						
+						Desenhos desenho = new Desenhos(2, Cores, Processos, true);
+						frame.getContentPane().add(desenho);
+//						frame.getContentPane().add(new Button("Texto"));
+						frame.setSize(800, 600);
+						frame.setVisible(true);
 					} else if (escl == 3) {
 						if (getAtivaLogs()) {
 							JOptionPane.showMessageDialog(null, "Cores: " + Cores

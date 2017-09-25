@@ -187,6 +187,65 @@ public class Desenhos extends JPanel {
 		
 		iniciaCores(false);
 	}
+	public Desenhos(int tipo, int numCores, int numProcs, boolean prioridade) {
+		this.tipo = tipo;
+		
+		func = new Funcoes();
+		this.Cores = new Lista();
+		this.priori0 = new Lista();
+		this.priori1 = new Lista();
+		this.priori2 = new Lista();
+		this.priori3 = new Lista();
+		getCores().setNomeLista("Cores");
+		getCores().setDeadline(9999);
+		
+		setAtivaDeadLine(false);
+		
+		setNumCores(numCores);
+		setNumProcs(numProcs);
+		
+		Lista temp = new Lista();
+		Lista aux;
+		temp.populaLista(getNumProcs(), true);
+		
+		int priori = 0;
+		while(priori < 4) {	
+			aux = getPrioridade(priori);
+			for (int i = 0; i < temp.getQtdNos(); i++) {
+				if(temp.returnPos(i).getPriori() == priori) {
+					if (temp.returnPos(i) != null) {
+	//					aux.push_fim
+						temp.
+							returnPos(i).
+								Entrega();
+						aux.push_fim_no(temp.returnPos(i).Entrega());
+					}
+				}
+			}
+			aux.setNomeLista("Prioridade " + priori);
+			priori++;
+		}
+
+		System.out.println("-Populada-");
+		temp.imprime();
+		System.out.println("-0-");
+		getPrioridade(0).imprime();
+		System.out.println("-1-");
+		getPrioridade(1).imprime();
+		System.out.println("-2-");
+		getPrioridade(2).imprime();
+		System.out.println("-3-");
+		getPrioridade(3).imprime();
+		
+		
+//		getPriori0().quickSort();
+//		System.out.println("----");
+		getPriori0().imprime();
+		System.out.println("----");
+//		getPriori0().setNomeLista("Aptos");
+		
+		iniciaCores(false);
+	}
 	
 	
 	private void iniciaLTG() {
@@ -223,18 +282,23 @@ public class Desenhos extends JPanel {
 					
 				}
 				No aux = new No();
+				int priori = 0;
 				if(temp.getTempExec() <= 0 || (temp.getRelogio() >= getCores().getDeadline() +1 && getAtivaDeadLine()) ) {
 					aux = getCores().getHead().Entrega();
 					aux.setTempExec(aux.getQuantum());;
+					priori = (getTipo() == 2)? temp.getPriori() : 0;
 					if (getPriori0().getHead() != null) {
-						temp.Recebe(getPriori0().getHead().Entrega());
+						
+						temp.Recebe(getPrioridade(priori).getHead().Entrega());
 					} else {
 						temp.Recebe(new No());
 						temp.setTempExec(0);
 					}
 					temp.setRelogio(0);
 //					if (aux.getTempExec() <= 0) {
-						getAbortados().push_fim_no(aux);
+						if(aux != getAbortados().getTail()) {
+							getAbortados().push_fim_no(aux);
+						}
 //					}
 				}
 				while(getCores().returnPos(getNumCores()) != null) {

@@ -360,6 +360,9 @@ public class Lista {
 				rem = pop_fim();
 			} else {
 				aux.setNext(rem.getNext());
+				if (rem.getNext() != null) {
+					rem.getNext().setBack(aux);
+				}
 			}
 		}
 
@@ -421,23 +424,24 @@ public class Lista {
 //			push_fim(2, 3);
 //			push_fim(2, 3);
 //			push_fim(2, 3);
-		} else 
-		if(!isEmpty()) {
-			System.out.println("populaLista 2: Já existe algo na arvore");
 		} else {
-			Random random = new Random();
-			int valor, priori;
-			for (int i = 0; i < numNos; i++) {
-				valor = random.nextInt(21);
-				valor = valor < 4 ? 4 : valor;
-				
-				if(usaPrioridade) {
-					priori = random.nextInt(4);
-					push_fim(valor, priori);
-				} else {
-					push_fim(valor);
+			if(!isEmpty()) {
+				System.out.println("populaLista 2: Já existe algo na arvore");
+			} else {
+				Random random = new Random();
+				int valor, priori;
+				for (int i = 0; i < numNos; i++) {
+					valor = random.nextInt(21);
+					valor = valor < 4 ? 4 : valor;
+					
+					if(usaPrioridade) {
+						priori = random.nextInt(4);
+						push_fim(valor, priori);
+					} else {
+						push_fim(valor);
+					}
+					
 				}
-				
 			}
 		}
 	}
@@ -453,19 +457,35 @@ public class Lista {
 			No temp = getHead();
 			while (temp.getNext() != null) {
 				if(temp.getPriori() == prioridade) {
-					ret.push_fim(temp.getQuantum()
-								, temp.getTempExec()
-								, temp.getPriori());
+					ret.push_fim_no(temp.Entrega());
 				}
 				temp = temp.getNext();
 			}
 			if(temp.getPriori() == prioridade) {
-				ret.push_fim(temp);
+				ret.push_fim_no(temp.Entrega());
 			}
 		}
 		return ret;
 	}
 
+	public Lista retornaPriori2(int prioridade) {
+		Lista ret = null;
+		if(isEmpty()) {
+			if (getAtivaLogs()) {
+				System.out.println("retornaPriori2: Arvore vazia");
+			}
+		} else {
+			ret = new Lista();
+			for (int i = 0; i < getQtdNos(); i++) {
+				if(returnPos(i).getPriori() == prioridade) {
+					ret.push_fim_no(returnPos(i).Entrega());
+				}
+			}
+
+		}
+		return ret;
+	}
+	
 	/*
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
