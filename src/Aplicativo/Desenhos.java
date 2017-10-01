@@ -1,12 +1,19 @@
 package Aplicativo;
 
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import encadeamento.LTG;
@@ -17,9 +24,10 @@ import includes.No;
 public class Desenhos extends JPanel {
 	
 	private int tipo;
-	private int pulaNo = 0, largNo= 100, alturaNo= 30;
+	private int pulaNo = 0, largNo= 104, alturaNo= 80;
 	int numCores, numProcs;
-	private boolean iniciou = false, ativaDeadLine = false, ativaRoundRobin = false;
+	private boolean iniciou = false, ativaDeadLine = false, ativaRoundRobin = false, boolAdicionar = false;
+	JButton btnAdicionar;
 	
 	LTG LTG;
 
@@ -132,6 +140,25 @@ public class Desenhos extends JPanel {
 	public static void setAbortados(Lista abortados) {
 		Desenhos.abortados = abortados;
 	}
+	public boolean getAtivaRoundRobin() {
+		return ativaRoundRobin;
+	}
+	public void setAtivaRoundRobin(boolean ativaRoundRobin) {
+		this.ativaRoundRobin = ativaRoundRobin;
+	}
+	JButton getBtnAdicionar() {
+		return btnAdicionar;
+	}
+	void setBtnAdicionar(JButton btnAdicionar) {
+		this.btnAdicionar = btnAdicionar;
+	}
+	public boolean getBoolAdicionar() {
+		return boolAdicionar;
+	}
+	public void setBoolAdicionar(boolean boolAdicionar) {
+		this.boolAdicionar = boolAdicionar;
+	}
+	
 	
 	// ------------------
 	
@@ -139,7 +166,7 @@ public class Desenhos extends JPanel {
 		this.tipo = 0;
 	}
 	
-	public Desenhos(int tipo, int numCores, int numProcs, int Deadline) {
+	public Desenhos(int tipo, int numCores, int numProcs, int Deadline, int org) {
 		this.tipo = tipo;
 		
 		func = new Funcoes();
@@ -155,7 +182,11 @@ public class Desenhos extends JPanel {
 		Lista temp = new Lista();
 		temp.populaLista(getNumProcs());
 		setPriori0(temp);
-		getPriori0().quickSort();
+		if(org == 0) {
+			getPriori0().quickSort();
+		} else {
+			getPriori0().quickSort2();
+		}
 		System.out.println("----");
 		getPriori0().imprime();
 		System.out.println("----");
@@ -215,14 +246,12 @@ public class Desenhos extends JPanel {
 			for (int i = 0; i < temp.getQtdNos(); i++) {
 				if(temp.returnPos(i).getPriori() == priori) {
 					if (temp.returnPos(i) != null) {
-	//					aux.push_fim
-						temp.
-							returnPos(i).
-								Entrega();
+						temp.returnPos(i).Entrega();
 						aux.push_fim_no(temp.returnPos(i).Entrega());
 					}
 				}
 			}
+			aux.setNomeLista("Prioridade " + priori);
 			aux.setNomeLista("Prioridade " + priori);
 			priori++;
 		}
@@ -271,7 +300,7 @@ public class Desenhos extends JPanel {
 					temp = getCores().getHead();
 					while (temp != null && temp.getNext() != null) {
 						
-						if(temp.getTempExec() <= 0 || temp.getRelogio() >= getCores().getDeadline() +1) {
+						if(temp.getTempExec() <= 0 || temp.getRelogio() >= temp.getDeadLineTotal() +1) {
 							if (getPriori0().getHead() != null) {
 								temp.Recebe(getPriori0().getHead().Entrega());
 							} else {
@@ -281,50 +310,84 @@ public class Desenhos extends JPanel {
 							temp.setRelogio(0);
 							getPriori0().pop_ini();
 						}
-						
 						temp = temp.getNext();
-						
 					}
+					
+					
+					if(temp.getTempExec() <= 0 || temp.getRelogio() >= temp.getDeadLineTotal()    +1) {
+						if (getPriori0().getHead() != null) {
+							temp.Recebe(getPriori0().getHead().Entrega());
+						} else {
+							temp.Recebe(new No());
+							temp.setTempExec(0);
+						}
+						temp.setRelogio(0);
+						getPriori0().pop_ini();
+					}
+					
 				} else {
 					
 					
 					temp = getCores().getHead();
+					Lista temp2 = null;
 					while (temp != null && temp.getNext() != null) {
 						
-						priori = (getTipo() == 2)? temp.getPriori() : 0;
-						pri = getPrioridade(priori);
+//						priori = (getTipo() == 2)? temp.getPriori() : 0;
+//						pri = getPrioridade(priori);
 						
 						if( temp.getTempExec() <= 0 ) {
 							System.out.println("-->-" + priori);
-							if (pri != null && pri.getHead() != null) {
-								temp.Recebe(pri.getHead().Entrega());
-							} else {
-								temp.Recebe(new No());
-								temp.setTempExec(0);
-							}
-							if(pri != null) {
-								pri.pop_ini();
-							}
+//							if (pri != null && pri.getHead() != null) {
+//								temp.Recebe(pri.getHead().Entrega());
+//							} else {
+								for (int i = 0; i < 4; i++) {
+									temp2 = getPrioridade(i);
+									if(temp2.getHead() != null) {
+										break;
+									}
+								}
+								if(temp2 != null && temp2.getHead() != null) {
+									temp.Recebe(temp2.getHead().Entrega());
+									temp2.pop_ini();
+								} else {
+									temp.Recebe(new No());
+									temp.setTempExec(0);
+								}
+//							}
+//							if(pri != null) {
+//								pri.pop_ini();
+//							}
 						}
 						
 						temp = temp.getNext();
 						
 					}
 
-					priori = (getTipo() == 2)? temp.getPriori() : 0;
-					pri = getPrioridade(priori);
+//					priori = (getTipo() == 2)? temp.getPriori() : 0;
+//					pri = getPrioridade(priori);
 					
 					if( temp.getTempExec() <= 0 ) {
 						System.out.println("-->-" + priori);
-						if (pri != null && pri.getHead() != null) {
-							temp.Recebe(pri.getHead().Entrega());
-						} else {
-							temp.Recebe(new No());
-							temp.setTempExec(0);
-						}
-						if(pri != null) {
-							pri.pop_ini();
-						}
+//						if (pri != null && pri.getHead() != null) {
+//							temp.Recebe(pri.getHead().Entrega());
+//						} else {
+							for (int i = 0; i < 4; i++) {
+								temp2 = getPrioridade(i);
+								if(temp2.getHead() != null) {
+									break;
+								}
+							}
+							if(temp2 != null && temp2.getHead() != null) {
+								temp.Recebe(temp2.getHead().Entrega());
+								temp2.pop_ini();
+							} else {
+								temp.Recebe(new No());
+								temp.setTempExec(0);
+							}
+//						}
+//						if(pri != null) {
+//							pri.pop_ini();
+//						}
 					}
 				}
 				
@@ -365,10 +428,35 @@ public class Desenhos extends JPanel {
 				}
 				*/
 				
+				
+				
+				
 				while(getCores().returnPos(getNumCores()) != null) {
 					getCores().pop_fim();
 				}
 			}
+		
+		getBtnAdicionar().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null, "Adicionando Processos, para cancelar clique no 'X' para parar.");
+				
+				Lista list = new Lista();
+				list.populaLista(1, (getTipo() == 2) ? true : false);
+				
+				No temp = list.getHead();
+				int priori = (getTipo() == 2)? temp.getPriori() : 0;
+				
+				
+				if ((getTipo() == 2) ? true : false) {
+					getPrioridade(priori).push_fim_no(temp.Entrega());
+				} else {
+					getPriori0().push_fim_no(temp.Entrega());
+				}
+				if(getTipo() == 3) {
+					getPriori0().quickSort2();
+				}
+			}
+		});
 	}
 	private void iniciaCores(boolean Prioris) {
 		// TODO Auto-generated method stub
@@ -389,78 +477,15 @@ public class Desenhos extends JPanel {
 				getCores().push_fim(temp);
 //			getPriori0().quickSort();
 			}
+			
+			
+			
+			setBtnAdicionar(new JButton("BIBI"));
+			btnAdicionar.setBounds(20, 20, 100, 420);
+			this.add(getBtnAdicionar());
 		}
 		
 		getCores().imprime();
-	}
-	private void iniciaRR() {
-		// TODO Auto-generated method stub
-		Lista core = getCores();
-		Lista pri = getPriori0();
-		
-		if (	!getCores().isEmpty()
-			) {
-//				Funcoes.waitSec(1);
-				System.out.println("----------------");
-				getCores().imprime();
-				//tem novo proceço?
-//				getCores().removeTempoExec(1);
-				
-				
-				int priori = 0;
-				No temp = new No();
-				Lista pri_temp = null;
-				
-				temp = getCores().getHead();
-				while (temp != null && temp.getNext() != null) {
-					
-					priori = (getTipo() == 2)? temp.getPriori() : 0;
-					pri_temp = getPrioridade(priori);
-					
-					
-					if(temp.getTempExec() <= 0 || temp.getRelogio() >= getCores().getDeadline() +1) {
-						if (pri_temp.getHead() != null) {
-							temp.Recebe(pri_temp.getHead().Entrega());
-						} else {
-							temp.Recebe(new No());
-							temp.setTempExec(0);
-						}
-						temp.setRelogio(0);
-						pri_temp.pop_ini();
-					}
-					
-					temp = temp.getNext();
-					
-				}
-				priori = 0;
-				No aux = new No();
-				
-				// Abortados 
-				if(temp.getTempExec() <= 0 || (temp.getRelogio() >= getCores().getDeadline() +1 && getAtivaDeadLine()) ) {
-					aux = getCores().getHead().Entrega();
-					aux.setTempExec(aux.getQuantum());;
-					priori = (getTipo() == 2)? temp.getPriori() : 0;
-					
-					if (getPrioridade(priori).getHead() != null) {
-						
-						temp.Recebe(getPrioridade(priori).getHead().Entrega());
-					} else {
-						temp.Recebe(new No());
-						temp.setTempExec(0);
-					}
-					temp.setRelogio(0);
-//					if (aux.getTempExec() <= 0) {
-						if(aux != getAbortados().getTail()) {
-//							getAbortados().push_fim_no(aux);
-						}
-//					}
-				}
-				
-				
-				while(getCores().returnPos(getNumCores()) != null) {
-					getCores().pop_fim();
-				}
-			}
 	}
 	
 	
@@ -478,12 +503,13 @@ public class Desenhos extends JPanel {
 		this.setBackground(Color.WHITE);
 		
 		int posTemp;
-		int posY_Core = 25;
-		int posY_Priori0 = 100;
-		int posY_Priori1 = 155;
-		int posY_Priori2 = 210;
-		int posY_Priori3 = 265;
-		int posY_Abortados = 365;
+		int aumentaPos_Y = 32;
+		int posY_Core = 25 + aumentaPos_Y;
+		int posY_Priori0 = 100 + aumentaPos_Y;
+		int posY_Priori1 = 155 + aumentaPos_Y;
+		int posY_Priori2 = 210 + aumentaPos_Y;
+		int posY_Priori3 = 265 + aumentaPos_Y;
+		int posY_Abortados = 365 + aumentaPos_Y;
 		Lista listTemp;
 		
 		
@@ -506,6 +532,7 @@ public class Desenhos extends JPanel {
 		if(getTipo() >= 1 || getTipo() <= 3) {
 
 			String text;
+			int dist_y = 30;
 			// Cores
 			listTemp = getCores();
 			posTemp = posY_Core;
@@ -516,16 +543,18 @@ public class Desenhos extends JPanel {
 			desenhaLista(g, listTemp, text, posTemp, false, getTipo());
 			// Aptos/Prioridade0
 			listTemp = getPriori0();
-			posTemp = posY_Priori0;
+			posTemp = posY_Priori0 + dist_y;
 			text = getTipo() != 2 ? "Aptos" : "Priodidade 0";
 			if (listTemp != null) {
 				text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
 			}
+			
 			desenhaLista(g, listTemp, text, posTemp, true, getTipo());
 			if(getTipo() == 2) {
+				dist_y = 60;
 				// Priodidade 1
 				listTemp = getPriori1();
-				posTemp = posY_Priori1;
+				posTemp = posY_Priori1 + dist_y + 20;
 				text = "Priodidade 1";
 				if (listTemp != null) {
 					text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
@@ -533,7 +562,7 @@ public class Desenhos extends JPanel {
 				desenhaLista(g, listTemp, text, posTemp, true, getTipo());
 				// Priodidade 2
 				listTemp = getPriori2();
-				posTemp = posY_Priori2;
+				posTemp = posY_Priori2 + dist_y + 70;
 				text = "Priodidade 2";
 				if (listTemp != null) {
 					text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
@@ -541,7 +570,7 @@ public class Desenhos extends JPanel {
 				desenhaLista(g, listTemp, text, posTemp, true, getTipo());
 				// Priodidade 3
 				listTemp = getPriori3();
-				posTemp = posY_Priori3;
+				posTemp = posY_Priori3 + dist_y*2 + 60;
 				text = "Priodidade 3";
 				if (listTemp != null) {
 					text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
@@ -550,7 +579,7 @@ public class Desenhos extends JPanel {
 			}
 			// Abortados
 			listTemp = getAbortados();
-			posTemp = posY_Abortados;
+			posTemp = posY_Abortados + dist_y;
 			text = "Abortados";
 			if (listTemp != null) {
 				text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
@@ -561,119 +590,14 @@ public class Desenhos extends JPanel {
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-//		if(getTipo() == 3) {
-//			while (	!getLTG().getCores().isEmpty() && !getLTG().getPriori0().isEmpty()
-//			) {
-//				removeAll();
-//				revalidate();
-//				repaint();
-////				Funcoes.waitSec(1);
-//				getLTG().iniciaLTG();
-//				
-//				String text;
-//				// Cores
-//				listTemp = getLTG().getCores();
-//				posTemp = posY_Core;
-//				text = "Cores";
-//				if (listTemp != null) {
-//					text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
-//				}
-//				desenhaLista(g, listTemp, text, posTemp, false);
-//				// Aptos/Prioridade0
-//				listTemp = getLTG().getPriori0();
-//				posTemp = posY_Priori0;
-//				text = getTipo() != 2 ? "Aptos" : "Priodidade 0";
-//				if (listTemp != null) {
-//					text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
-//				}
-//				desenhaLista(g, listTemp, text, posTemp, true);
-//				
-//			}
-//
-//			
-//			
-//			
-//			
-//		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		if(getTipo() >= 1 || getTipo() <= 3) {
-//
-//			String text;
-//			// Cores
-//			listTemp = getCores();
-//			posTemp = posY_Core;
-//			text = "Cores";
-//			if (listTemp != null) {
-//				text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
-//			}
-//			desenhaLista(g, listTemp, text, posTemp, false);
-//			// Aptos/Prioridade0
-//			listTemp = getPriori0();
-//			posTemp = posY_Priori0;
-//			text = getTipo() != 2 ? "Aptos" : "Priodidade 0";
-//			if (listTemp != null) {
-//				text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
-//			}
-//			desenhaLista(g, listTemp, text, posTemp, true);
-//			if(getTipo() == 2) {
-//				// Priodidade 1
-//				listTemp = getPriori1();
-//				posTemp = posY_Priori1;
-//				text = "Priodidade 1";
-//				if (listTemp != null) {
-//					text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
-//				}
-//				desenhaLista(g, listTemp, text, posTemp, true);
-//				// Priodidade 2
-//				listTemp = getPriori2();
-//				posTemp = posY_Priori2;
-//				text = "Priodidade 2";
-//				if (listTemp != null) {
-//					text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
-//				}
-//				desenhaLista(g, listTemp, text, posTemp, true);
-//				// Priodidade 3
-//				listTemp = getPriori3();
-//				posTemp = posY_Priori3;
-//				text = "Priodidade 3";
-//				if (listTemp != null) {
-//					text = listTemp.getNomeLista().isEmpty() ? text : listTemp.getNomeLista();
-//				}
-//				desenhaLista(g, listTemp, text, posTemp, true);
-//			}
-//		}
-		
-		
-		
-		
-		
-		
-		g.setColor(Color.BLUE);;
-		g.fillRect(25, 425, getLargNo(), getAlturaNo());
-		
-		g.setColor(new Color(190, 81, 215));
-		g.fillRect(25, 465, getLargNo(), getAlturaNo());
-		
-		g.setColor(Color.RED);
-		g.drawString("Algum texto.", 25, 520);;
+//		g.setColor(Color.BLUE);;
+//		g.fillRect(25, 425, getLargNo(), getAlturaNo());
+//		
+//		g.setColor(new Color(190, 81, 215));
+//		g.fillRect(25, 465, getLargNo(), getAlturaNo());
+//		
+//		g.setColor(Color.RED);
+//		g.drawString("Algum texto.", 25, 520);;
 		repaint();
 	}
 	private void desenhaLista(Graphics g, Lista listTemp, String text, int posY, boolean cortaFila, int tipo) {
@@ -683,16 +607,7 @@ public class Desenhos extends JPanel {
 			System.out.println("desenhaLista: Lista não desenhada, lista vazia.");
 		} else {
 			
-			String sub_texto = "";
 			No atu = null;
-			if (tipo == 1) {
-				sub_texto = "Quantum= ";
-			} else if (tipo == 2) {
-				sub_texto = "Priori= ";
-			} else if (tipo == 3) {
-				sub_texto = "Relogio= ";
-			}
-			
 			
 			Graphics2D g2 = (Graphics2D) g;
 			int posTemp = posY;
@@ -706,22 +621,32 @@ public class Desenhos extends JPanel {
 			
 			No temp = listTemp.getHead();
 			int cont = 1;
+			String sub_texto = "";
 			while (temp != null  && temp.getNext() != null && cont < 6) {
 				
 				g2.setColor(new Color(86, 146, 246));;
 				g2.draw( new Rectangle2D.Double(getPulaNo(), posTemp, getLargNo(), getAlturaNo()));
 				
 				g2.setColor(Color.RED);
-				g2.drawString("TempExec= "+ temp.getTempExec(), getPulaNo() +4, posTemp + getAlturaNo()/2);
+				if(temp.getTempExecTotal() < 999999) {
+					g2.drawString("TempExc Tot= "+ temp.getTempExecTotal(), getPulaNo() +4, posTemp + getAlturaNo()/4);
+					g2.drawString("TempExec= "+ temp.getTempExec(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
+					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
+					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
+				}
+				
+				// Mensagem diferenciada
 				if (tipo >= 1 || tipo <= 3) {
 					if (tipo == 1) {
-						sub_texto = "Quantum= " + temp.getQuantum();
+						sub_texto = "";
 					} else if (tipo == 2) {
 						sub_texto = "Priori= " + temp.getPriori();
 					} else if (tipo == 3) {
-						sub_texto = "Relogio= " + temp.getRelogio();
+						sub_texto = "Deadline= " + temp.getDeadLineTotal() + "/" + temp.getRelogio();
 					}
-					g2.drawString(sub_texto, getPulaNo() +4, posTemp + getAlturaNo()/2 +14);
+					if(temp.getTempExecTotal() < 999999) {
+						g2.drawString(sub_texto, getPulaNo() +4, posTemp + getAlturaNo()/3+ 46);
+					}
 				}
 				
 				temp = temp.getNext();
@@ -741,16 +666,23 @@ public class Desenhos extends JPanel {
 				g2.draw( new Rectangle2D.Double(getPulaNo(), posTemp, getLargNo(), getAlturaNo()));
 				
 				g2.setColor(Color.RED);
-				g2.drawString("TempExec= "+ temp.getTempExec(), getPulaNo() +4, posTemp + getAlturaNo()/2);
+				if(temp.getTempExecTotal() < 999999) {
+					g2.drawString("TempExc Tot= "+ temp.getTempExecTotal(), getPulaNo() +4, posTemp + getAlturaNo()/4);
+					g2.drawString("TempExec= "+ temp.getTempExec(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
+					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
+					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
+				}
 				if (tipo >= 1 || tipo <= 3) {
 					if (tipo == 1) {
-						sub_texto = "Quantum= " + temp.getQuantum();
+						sub_texto = "Quantum= " + temp.getTempExecTotal();
 					} else if (tipo == 2) {
 						sub_texto = "Priori= " + temp.getPriori();
 					} else if (tipo == 3) {
-						sub_texto = "Relogio= " + temp.getRelogio();
+						sub_texto = "Deadline= " + temp.getDeadLineTotal() + "/" + temp.getRelogio();
 					}
-					g2.drawString(sub_texto, getPulaNo() +4, posTemp + getAlturaNo()/2 +14);
+					if(temp.getTempExecTotal() < 999999) {
+						g2.drawString(sub_texto, getPulaNo() +4, posTemp + getAlturaNo()/3+ 46);
+					}
 				}
 
 				int dist = 20;
@@ -763,12 +695,6 @@ public class Desenhos extends JPanel {
 			}
 		}
 		this.repaint();
-	}
-	public boolean getAtivaRoundRobin() {
-		return ativaRoundRobin;
-	}
-	public void setAtivaRoundRobin(boolean ativaRoundRobin) {
-		this.ativaRoundRobin = ativaRoundRobin;
 	}
 	
 

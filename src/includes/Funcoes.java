@@ -62,7 +62,7 @@ public class Funcoes {
 		if(removeHead.isEmpty()) {
 			System.out.println("repassaFila: lista removeHead vazia.");
 		} else {
-			No head = new No(removeHead.getHead().getQuantum(), 
+			No head = new No(removeHead.getHead().getTempExecTotal(), 
 							 removeHead.getHead().getTempExec(), 
 							 removeHead.getHead().getPriori() );
 			head.setEstado(3);
@@ -86,7 +86,7 @@ public class Funcoes {
 		if(removeHead.isEmpty()) {
 			System.out.println("repassaFila: lista removeHead vazia.");
 		} else {
-			No inicioFila = new No(removeHead.getHead().getQuantum(), 
+			No inicioFila = new No(removeHead.getHead().getTempExecTotal(), 
 							 removeHead.getHead().getTempExec(), 
 							 removeHead.getHead().getPriori() );
 			inicioFila.setEstado(3);
@@ -128,7 +128,7 @@ public class Funcoes {
 		l.push_fim(10, 0, 0);
 		l.push_fim(20, 0, 1);
 		l.push_fim(30, 0, 3);
-		System.out.println(l.temNoTempoZerado().getQuantum());
+		System.out.println(l.temNoTempoZerado().getTempExecTotal());
 		
 		
 //		r.push_fim(40, 2);

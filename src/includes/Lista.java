@@ -125,6 +125,7 @@ public class Lista {
 	
 	public void push_fim(int Quantum) {
 		No novo = new No(Quantum);
+//		No novo = new No(true, Quantum);
 		if (isEmpty()) {
 			if (getAtivaLogs()) {
 				System.out.println("push_fim1: Lista Vazia, adicionando inicio.");
@@ -699,6 +700,7 @@ public class Lista {
 		Lista vetor = this;
 		quickSort(vetor, 0, vetor.getQtdNos() -1);
 	}
+	
 	private void quickSort(Lista vetor, int inicio, int fim) {
 		if (inicio < fim) {
 			int posicaoPivo = separar(vetor, inicio, fim);
@@ -706,7 +708,7 @@ public class Lista {
 			quickSort(vetor, posicaoPivo + 1, fim);
 		}
 	}
-
+	
 	private int separar(Lista vetor, int inicio, int fim) {
 		No [] novo = new No[vetor.getQtdNos()];
 		for (int j = 0; j < vetor.getQtdNos(); j++) {
@@ -740,6 +742,50 @@ public class Lista {
 	}
 	
 	
+	public void quickSort2() {
+		Lista vetor = this;
+		quickSort2(vetor, 0, vetor.getQtdNos() -1);
+	}
+	
+	private void quickSort2(Lista vetor, int inicio, int fim) {
+		if (inicio < fim) {
+			int posicaoPivo = separar2(vetor, inicio, fim);
+			quickSort2(vetor, inicio, posicaoPivo - 1);
+			quickSort2(vetor, posicaoPivo + 1, fim);
+		}
+	}
+	
+	private int separar2(Lista vetor, int inicio, int fim) {
+		No [] novo = new No[vetor.getQtdNos()];
+		for (int j = 0; j < vetor.getQtdNos(); j++) {
+			novo[j] = vetor.returnPos(j);
+		}
+		
+		No pivo = novo[inicio];
+        int i = inicio + 1, f = fim;
+        while (i <= f) {
+               if (novo[i].getDeadLineTotal() <= pivo.getDeadLineTotal())
+                      i++;
+               else if (pivo.getDeadLineTotal() < novo[f].getDeadLineTotal())
+                      f--;
+               else {
+                      No troca = novo[i];
+                      novo[i] = novo[f];
+                      novo[f] = troca;
+                      i++;
+                      f--;
+               }
+        }
+        novo[inicio] = novo[f];
+        novo[f] = pivo;
+        
+        vetor.removeApartir(0);
+        for (int j = 0; j < novo.length; j++) {
+        	
+			vetor.push_fim(novo[j]);
+		}
+        return f;
+	}
 	
 	
 	
@@ -807,6 +853,21 @@ public class Lista {
 		return ret;
 	}
 
-	
+	public static void main(String args[]) {
+		Lista l = new Lista();
+		l.push_fim(9);
+		l.push_fim(8);
+		l.push_fim(7);
+		l.push_fim(6);
+		l.push_fim(5);
+//		l.imprime();
+		l.quickSort2();
+		l.imprime();
+		
+		
+		
+		
+		
+	}
 
 }

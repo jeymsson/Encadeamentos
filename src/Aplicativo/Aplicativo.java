@@ -105,7 +105,7 @@ public class Aplicativo {
 		panel.add(lblEscalonamento, gbc_lblEscalonamento);
 		
 		JComboBox comboEscalonamento = new JComboBox();
-		comboEscalonamento.setModel(new DefaultComboBoxModel(new String[] {"Escolha uma op\u00E7\u00E3o", "SJF", "Round Robin", "LTG"}));
+		comboEscalonamento.setModel(new DefaultComboBoxModel(new String[] {"0 - Escolha uma op\u00E7\u00E3o", "1 - SJF", "2 - Round Robin", "3 - LTG"}));
 		gbc_comboEscalonamento.insets = new Insets(0, 0, 5, 5);
 		gbc_comboEscalonamento.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboEscalonamento.gridx = 2;
@@ -261,7 +261,7 @@ public class Aplicativo {
 									+ ", Least Time to Go");
 						}
 						
-						Desenhos desenho = new Desenhos(3, Cores, Processos, f.string2int(Deadline));
+						Desenhos desenho = new Desenhos(3, Cores, Processos, f.string2int(Deadline), 1);
 						frame.getContentPane().add(desenho);
 						frame.setSize(800, 600);
 						frame.setVisible(true);
