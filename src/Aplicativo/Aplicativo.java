@@ -152,7 +152,7 @@ public class Aplicativo {
 		panel.add(lblDeadline, gbc_lblDeadline);
 		
 		txtDeadline = new JTextField();
-		txtDeadline.setText("3");
+		txtDeadline.setEditable(false);
 		gbc_txtDeadline.insets = new Insets(0, 0, 5, 5);
 		gbc_txtDeadline.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtDeadline.gridx = 2;
