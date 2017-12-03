@@ -8,6 +8,7 @@ public class No {
 	private int tempExecTotal, tempExec, Priori, ID, Relogio, DeadLineTotal, contadorIrrisorio, Quantum;
 	private int Estado; // 1- pronto, 2- Esperando, 3- Executando;
 	private int DadoComplementar = -1; // 1- pronto, 2- Esperando, 3- Executando;
+	private int tamanho = 0 ;
 	
 	public int getTempExec() {
 		return this.tempExec;
@@ -90,6 +91,12 @@ public class No {
 		setDeadLineTotal(valor);;
 		return getDeadLineTotal();
 	}
+	public int generateTamanho() {
+		Random random = new Random();
+		int valor = random.nextInt(1057);
+		this.tamanho = valor;
+		return this.tamanho;
+	}
 	
 	
 	
@@ -102,6 +109,7 @@ public class No {
 		setBack(null);
 		setNext(null);
 		generateID();
+		generateTamanho();
 		generateQuantum();
 		setEstado(1);
 		setRelogio(0);
@@ -116,6 +124,7 @@ public class No {
 		setBack(null);
 		setNext(null);
 		generateID();
+		generateTamanho();
 		generateQuantum();
 		setEstado(1);
 		setRelogio(rel);
@@ -130,6 +139,7 @@ public class No {
 		setBack(null);
 		setNext(null);
 		generateID();
+		generateTamanho();
 		generateQuantum();
 		setEstado(1);
 		setRelogio(0);
@@ -144,6 +154,7 @@ public class No {
 		setBack(null);
 		setNext(null);
 		generateID();
+		generateTamanho();
 		generateQuantum();
 		setEstado(1);
 		setRelogio(0);
@@ -158,6 +169,7 @@ public class No {
 		setBack(null);
 		setNext(null);
 		generateID();
+		generateTamanho();
 		generateQuantum();
 		setEstado(1);
 		setRelogio(0);
