@@ -140,5 +140,34 @@ public class Funcoes {
 //		l.imprime();
 		
 	}
+    // dump() - 3 funcoes genericas
+	public static <G> int dump(G[] valor){
+		int ret = 0;
+		int cont=0;
+		for (G m : valor) {
+			System.out.print(m+" ");
+			cont++;
+		}
+		System.out.println();
+		if(cont >0){
+			ret = 1;
+		}
+		return ret;
+	}
+	public static <G> int dump(G valor){
+		int ret = 0;
+		int cont=0;
+		//for (G m : valor) {
+			System.out.print(valor+" ");
+			//cont++;
+		//}
+		System.out.println();
+		//if(cont >0){
+			ret = 1;
+		//}
+		return ret;
+	}
+
+
 
 }
