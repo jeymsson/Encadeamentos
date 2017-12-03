@@ -8,14 +8,6 @@ public class Lista {
 	No head, tail;
 	int qtdNos, Deadline;
 	String nomeLista;
-
-	public String getNomeLista() {
-		return nomeLista;
-	}
-	public void setNomeLista(String nomeLista) {
-		this.nomeLista = nomeLista;
-	}
-
 	boolean ativaLogs = false;
 
 
@@ -27,10 +19,12 @@ public class Lista {
 		setNomeLista("");
 	}
 	
-	
-	
-	
-	
+	public String getNomeLista() {
+		return nomeLista;
+	}
+	public void setNomeLista(String nomeLista) {
+		this.nomeLista = nomeLista;
+	}
 	
 
 	public int getDeadline() {
@@ -60,7 +54,6 @@ public class Lista {
 	public void setHead(No head) {
 		this.head = head;
 	}
-
 	public No getTail() {
 		return this.tail;
 	}
@@ -468,7 +461,6 @@ public class Lista {
 		}
 		return ret;
 	}
-
 	public Lista retornaPriori2(int prioridade) {
 		Lista ret = null;
 		if(isEmpty()) {
@@ -487,54 +479,6 @@ public class Lista {
 		return ret;
 	}
 	
-	/*
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Funcoes f = new Funcoes();
-		Lista l = new Lista();
-		l.setAtivaLogs(true);
-		
-//		l.push_fim(10, 0, 0);
-//		l.push_fim(20, 0, 1);
-//		l.push_fim(30, 0, 1);
-//		l.push_fim(40, 0, 2);
-//		l.push_fim(50, 0, 1);
-//		l.retornaPriori(1).imprime();
-		No n1 = new No(10, 10, 0);
-		No n2 = new No(20, 20, 1);
-		No n3 = new No(30, 30, 1);
-		No n4 = new No(40, 40, 2);
-		No n5 = new No(50, 50, 1);
-		No n6 = new No(80, 80, 1);
-		l.push_fim(n1);
-		l.push_fim(n2);
-		l.push_fim(n3);
-		l.push_fim(n4);
-		l.push_fim(n5);
-//		l.push_pos(0, 2);
-//		l.push_pos(0, 3);
-//		l.push_pos(0, 8);
-//		l.push_pos_no(2, n6);
-//		l.pop_pos(8);
-		l.removeApartir(8);
-		l.imprime();
-		
-		System.out.println("--");
-//		System.out.println(l.temNoTempoZerado().getQuantum());
-//		System.out.println(l.pop_ini().getQuantum());;
-//		l.pop_ini().getQuantum();
-		
-		System.out.println("--");
-//		System.out.println(l.temNoTempoZerado().getQuantum());
-		
-		
-		for (int i = 0; i < 5; i++) {
-//			System.out.println(i + 1);
-//			f.waitSec(1);
-		}
-	}
-	*/
-
 	public void removeTempoExec(int i) {
 		// TODO Auto-generated method stub
 		if (isEmpty()) {
@@ -551,7 +495,26 @@ public class Lista {
 			temp.setTempExec(temp.getTempExec() -i);
 		}
 	}
-
+	public No removeTempoExecIgualZero() {
+		No ret = null;
+		if (isEmpty()) {
+			System.out.println("removeTempoExecIgual: Lista Vazia");
+		} else {
+			No temp = getHead();
+			int cont = 0;
+			while (temp.getNext() != null) {
+				if(temp.getTempExec() <= 0) {
+					pop_pos(cont);
+				}
+				temp = temp.getNext();
+				cont++;
+			}
+			if(temp.getTempExec() <= 0) {
+				pop_pos(cont);
+			}
+		}
+		return ret;
+	}
 	public No temNoTempoZerado() {
 		No Ret = null;
 		if (isEmpty()) {
@@ -630,7 +593,6 @@ public class Lista {
 		return ret;
 	}
 
-	
 	public boolean removeApartir(int index) {
 		boolean ret = false;
 		if (isEmpty()) {
@@ -700,7 +662,6 @@ public class Lista {
 		Lista vetor = this;
 		quickSort(vetor, 0, vetor.getQtdNos() -1);
 	}
-	
 	private void quickSort(Lista vetor, int inicio, int fim) {
 		if (inicio < fim) {
 			int posicaoPivo = separar(vetor, inicio, fim);
@@ -708,7 +669,6 @@ public class Lista {
 			quickSort(vetor, posicaoPivo + 1, fim);
 		}
 	}
-	
 	private int separar(Lista vetor, int inicio, int fim) {
 		No [] novo = new No[vetor.getQtdNos()];
 		for (int j = 0; j < vetor.getQtdNos(); j++) {
@@ -741,12 +701,10 @@ public class Lista {
         return f;
 	}
 	
-	
 	public void quickSort2() {
 		Lista vetor = this;
 		quickSort2(vetor, 0, vetor.getQtdNos() -1);
 	}
-	
 	private void quickSort2(Lista vetor, int inicio, int fim) {
 		if (inicio < fim) {
 			int posicaoPivo = separar2(vetor, inicio, fim);
@@ -754,7 +712,6 @@ public class Lista {
 			quickSort2(vetor, posicaoPivo + 1, fim);
 		}
 	}
-	
 	private int separar2(Lista vetor, int inicio, int fim) {
 		No [] novo = new No[vetor.getQtdNos()];
 		for (int j = 0; j < vetor.getQtdNos(); j++) {
@@ -787,11 +744,6 @@ public class Lista {
         return f;
 	}
 	
-	
-	
-	
-	
-	
 	public boolean GeraContador() {
 		boolean ret = false;
 		if (isEmpty()) {
@@ -810,7 +762,6 @@ public class Lista {
 		}
 		return ret;
 	}
-
 	public Lista organizaFila(Lista lista) {
 		// TODO Auto-generated method stub
 		Lista l = null;
@@ -832,27 +783,55 @@ public class Lista {
 		return l;
 	}
 
-	public No removeTempoExecIgualZero() {
-		No ret = null;
-		if (isEmpty()) {
-			System.out.println("removeTempoExecIgual: Lista Vazia");
-		} else {
-			No temp = getHead();
-			int cont = 0;
-			while (temp.getNext() != null) {
-				if(temp.getTempExec() <= 0) {
-					pop_pos(cont);
-				}
-				temp = temp.getNext();
-				cont++;
-			}
-			if(temp.getTempExec() <= 0) {
-				pop_pos(cont);
-			}
+	/*
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Funcoes f = new Funcoes();
+		Lista l = new Lista();
+		l.setAtivaLogs(true);
+		
+//		l.push_fim(10, 0, 0);
+//		l.push_fim(20, 0, 1);
+//		l.push_fim(30, 0, 1);
+//		l.push_fim(40, 0, 2);
+//		l.push_fim(50, 0, 1);
+//		l.retornaPriori(1).imprime();
+		No n1 = new No(10, 10, 0);
+		No n2 = new No(20, 20, 1);
+		No n3 = new No(30, 30, 1);
+		No n4 = new No(40, 40, 2);
+		No n5 = new No(50, 50, 1);
+		No n6 = new No(80, 80, 1);
+		l.push_fim(n1);
+		l.push_fim(n2);
+		l.push_fim(n3);
+		l.push_fim(n4);
+		l.push_fim(n5);
+//		l.push_pos(0, 2);
+//		l.push_pos(0, 3);
+//		l.push_pos(0, 8);
+//		l.push_pos_no(2, n6);
+//		l.pop_pos(8);
+		l.removeApartir(8);
+		l.imprime();
+		
+		System.out.println("--");
+//		System.out.println(l.temNoTempoZerado().getQuantum());
+//		System.out.println(l.pop_ini().getQuantum());;
+//		l.pop_ini().getQuantum();
+		
+		System.out.println("--");
+//		System.out.println(l.temNoTempoZerado().getQuantum());
+		
+		
+		for (int i = 0; i < 5; i++) {
+//			System.out.println(i + 1);
+//			f.waitSec(1);
 		}
-		return ret;
 	}
+	*/
 
+	
 	public static void main(String args[]) {
 		Lista l = new Lista();
 		l.push_fim(9);
