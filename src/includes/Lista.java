@@ -1,6 +1,5 @@
 package includes;
 
-import java.util.Iterator;
 import java.util.Random;
 
 public class Lista {
@@ -9,7 +8,8 @@ public class Lista {
 	int qtdNos, Deadline;
 	String nomeLista;
 	boolean ativaLogs = false;
-
+	private int tamanho = 0 ;
+	
 
 	public Lista() {
 		// TODO Auto-generated constructor stub
@@ -25,7 +25,12 @@ public class Lista {
 	public void setNomeLista(String nomeLista) {
 		this.nomeLista = nomeLista;
 	}
-	
+	public int getTamanho() {
+		return tamanho;
+	}
+	public void setTamanho(int tamanho) {
+		this.tamanho = tamanho;
+	}
 
 	public int getDeadline() {
 		return this.Deadline;
