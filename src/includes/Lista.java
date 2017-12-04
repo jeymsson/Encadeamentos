@@ -8,8 +8,9 @@ public class Lista {
 	int qtdNos, Deadline;
 	String nomeLista;
 	boolean ativaLogs = false;
-	private int tamanho = 0 ;
-	
+	private int tamanho = 0;
+	private int espacoDesalocado = 0 ;
+
 
 	public Lista() {
 		// TODO Auto-generated constructor stub
@@ -18,7 +19,7 @@ public class Lista {
 		setQtdNos(0);
 		setNomeLista("");
 	}
-	
+
 	public String getNomeLista() {
 		return nomeLista;
 	}
@@ -30,6 +31,13 @@ public class Lista {
 	}
 	public void setTamanho(int tamanho) {
 		this.tamanho = tamanho;
+		setDesalocado(tamanho);
+	}
+	public int getDesalocado() {
+		return espacoDesalocado;
+	}
+	public void setDesalocado(int Desalocado) {
+		this.espacoDesalocado = Desalocado;
 	}
 
 	public int getDeadline() {
@@ -38,7 +46,7 @@ public class Lista {
 	public void setDeadline(int deadline) {
 		this.Deadline = deadline;
 	}
-	
+
 	public int getQtdNos() {
 		return this.qtdNos;
 	}
@@ -52,7 +60,7 @@ public class Lista {
 	public void setAtivaLogs(boolean ativaLogs) {
 		this.ativaLogs = ativaLogs;
 	}
-	
+
 	public No getHead() {
 		return this.head;
 	}
@@ -83,7 +91,7 @@ public class Lista {
 				System.out.println("Temp exec.: '" + temp.getTempExec()
 								+ "' Prioridade: '"+ temp.getPriori() +"'"
 								+ "' Relogio: '"+ temp.getRelogio() +"'");
-				
+
 				temp = temp.getNext();
 			}
 			System.out.println("Temp exec.: '" + temp.getTempExec()
@@ -91,7 +99,36 @@ public class Lista {
 			+ "' Relogio: '"+ temp.getRelogio() +"'");
 		}
 	}
-	
+	public void imprimeID() {
+		if (isEmpty()) {
+			System.out.println("imprime: Lista Vazia");
+		} else {
+			No temp = getHead();
+			while (temp.getNext() != null) {
+				System.out.print("ID.: '" + temp.getID());
+				System.out.print(" -> ");
+				temp = temp.getNext();
+			}
+			System.out.println("ID.: '" + temp.getID());
+		}
+	}
+	public No buscaID(int ID) {
+		No ret = null;
+		if (!isEmpty()) {
+			No temp = getHead();
+			while (temp.getNext() != null) {
+				if(temp.getID() == ID) {
+					break;
+				}
+				temp = temp.getNext();
+			}
+			if(temp.getID() == ID) {
+				ret = temp;
+			}
+		}
+		return ret;
+	}
+
 	public void up_estados() {
 		if (isEmpty()) {
 			if (ativaLogs) {
@@ -112,15 +149,15 @@ public class Lista {
 		No temp = (getHead() != null) ? getHead() : null;
 		while (temp != null && temp.getNext() != null) {
 			temp.setEstado(estado);
-			
+
 			temp = temp.getNext();
 		}
 		if (temp != null) {
 			temp.setEstado(estado);
 		}
 	}
-	
-	
+
+
 	public void push_fim(int Quantum) {
 		No novo = new No(Quantum);
 //		No novo = new No(true, Quantum);
@@ -154,7 +191,7 @@ public class Lista {
 				setTail(novo);
 			} else {
 				No temp = getTail();
-				
+
 				temp.setNext(novo);;
 				novo.setBack(temp);
 				setTail(novo);
@@ -246,7 +283,7 @@ public class Lista {
 			setTail(novo);
 		}
 		setQtdNos(getQtdNos() +1);
-		
+
 	}
 	public void push_pos(int index, int Quantum) {
 		if(isEmpty() || index < 1) {
@@ -292,7 +329,7 @@ public class Lista {
 			setQtdNos(getQtdNos() +1);
 		}
 	}
-	
+
 	public No pop_fim() {
 		No retorno  = null;
 		if (isEmpty()) {
@@ -307,7 +344,7 @@ public class Lista {
 			setQtdNos(getQtdNos() -1);
 		} else {
 			retorno = getTail();
-			
+
 			setTail(getTail().getBack());
 			getTail().setNext(null);
 			setQtdNos(getQtdNos() -1);
@@ -334,7 +371,7 @@ public class Lista {
 				System.out.println("pop_fim2: Removido primeiro.");
 			}
 			retorno = getHead().Entrega();
-			
+
 			setHead(getHead().getNext());
 
 
@@ -368,9 +405,11 @@ public class Lista {
 		return rem;
 
 	}
-	
-	
-	public void populaLista(int numNos) {
+
+
+	public int populaLista(int numNos) {
+		int auto_increment = 0;
+
 		if(!isEmpty()) {
 			if (getAtivaLogs()) {
 				System.out.println("populaLista 1: Já existe algo na arvore");
@@ -378,13 +417,17 @@ public class Lista {
 		} else {
 			Random random = new Random();
 			int valor;
+			auto_increment = 1;
 			for (int i = 0; i < numNos; i++) {
 				valor = random.nextInt(21);
 				valor = valor < 4 ? 4 : valor;
-				
+
 				push_fim(valor);
+				getTail().setID(auto_increment);
+				auto_increment++;
 			}
 		}
+		return auto_increment;
 	}
 	public void populaLista(int numNos, boolean usaPrioridade) {
 		if(false) {
@@ -395,7 +438,7 @@ public class Lista {
 			push_fim(9);
 			push_fim(9);
 			push_fim(9);
-			
+
 //			push_fim(3, 0);
 //			push_fim(5, 0);
 //			push_fim(6, 0);
@@ -412,8 +455,8 @@ public class Lista {
 //			push_fim(8, 3);
 //			push_fim(6, 3);
 //			push_fim(7, 3);
-			
-			
+
+
 //			push_fim(7, 0);
 //			push_fim(3, 1);
 //			push_fim(6, 1);
@@ -432,19 +475,81 @@ public class Lista {
 				for (int i = 0; i < numNos; i++) {
 					valor = random.nextInt(21);
 					valor = valor < 4 ? 4 : valor;
-					
+
 					if(usaPrioridade) {
 						priori = random.nextInt(4);
 						push_fim(valor, priori);
 					} else {
 						push_fim(valor);
 					}
-					
+
 				}
 			}
 		}
 	}
+	public int populaLista(int numNos, boolean usaPrioridade, int inicCom) {
+		if(false) {
 
+			push_fim(12);
+			push_fim(12);
+			push_fim(12);
+			push_fim(9);
+			push_fim(9);
+			push_fim(9);
+
+//			push_fim(3, 0);
+//			push_fim(5, 0);
+//			push_fim(6, 0);
+//			push_fim(7, 0);
+//			push_fim(3, 1);
+//			push_fim(6, 1);
+//			push_fim(6, 1);
+//			push_fim(7, 1);
+//			push_fim(3, 2);
+//			push_fim(7, 2);
+//			push_fim(6, 2);
+//			push_fim(7, 2);
+//			push_fim(3, 3);
+//			push_fim(8, 3);
+//			push_fim(6, 3);
+//			push_fim(7, 3);
+
+
+//			push_fim(7, 0);
+//			push_fim(3, 1);
+//			push_fim(6, 1);
+//			push_fim(8, 3);
+//			push_fim(6, 3);
+//			push_fim(7, 3);
+//			push_fim(2, 3);
+//			push_fim(2, 3);
+//			push_fim(2, 3);
+		} else {
+			if(!isEmpty()) {
+				System.out.println("populaLista 2: Já existe algo na arvore");
+			} else {
+				Random random = new Random();
+				int valor, priori;
+				for (int i = 0; i < numNos; i++) {
+					valor = random.nextInt(21);
+					valor = valor < 4 ? 4 : valor;
+
+					if(usaPrioridade) {
+						priori = random.nextInt(4);
+						push_fim(valor, priori);
+						getTail().setID(inicCom);
+					} else {
+						push_fim(valor);
+						getTail().setID(inicCom);
+					}
+					inicCom++;
+				}
+			}
+		}
+		return inicCom;
+	}
+
+	
 	public Lista retornaPriori(int prioridade) {
 		Lista ret = null;
 		if(isEmpty()) {
@@ -483,7 +588,7 @@ public class Lista {
 		}
 		return ret;
 	}
-	
+
 	public void removeTempoExec(int i) {
 		// TODO Auto-generated method stub
 		if (isEmpty()) {
@@ -494,7 +599,7 @@ public class Lista {
 			No temp = getHead();
 			while (temp.getNext() != null) {
 				temp.setTempExec(temp.getTempExec() -i);
-				
+
 				temp = temp.getNext();
 			}
 			temp.setTempExec(temp.getTempExec() -i);
@@ -533,7 +638,7 @@ public class Lista {
 					Ret = temp;
 					return Ret;
 				}
-				
+
 				temp = temp.getNext();
 			}
 			if(Ret == null && temp.getTempExec() == 0) {
@@ -557,7 +662,7 @@ public class Lista {
 				temp = temp.getNext();
 				cont++;
 			}
-			
+
 			if(cont == index) {
 				if (ativaLogs) {
 					System.out.println("returnPos: Retornando pos correta.");
@@ -583,7 +688,7 @@ public class Lista {
 			while (temp.getNext() != null && temp.getContadorIrrisorio() != contador) {
 				temp = temp.getNext();
 			}
-			
+
 			if(temp.getContadorIrrisorio() == contador) {
 				if (ativaLogs) {
 					System.out.println("getContadorIrrisorio: Retornando pos correta.");
@@ -611,7 +716,7 @@ public class Lista {
 		} else {
 			No temp = getTail();
 			int cont = getQtdNos();
-			
+
 			while (temp.getBack() != null && (cont-1) != index) {
 				pop_fim();
 				temp = temp.getBack();
@@ -627,7 +732,7 @@ public class Lista {
 		No temp = getHead();
 		while (temp.getNext() != null) {
 			temp.setRelogio(temp.getRelogio() +i);
-			
+
 			temp = temp.getNext();
 		}
 		temp.setRelogio(temp.getRelogio() +i);
@@ -638,7 +743,7 @@ public class Lista {
 		No prim = null;
 		No ultm = null;
 //		l.setAtivaLogs(true);
-		
+
 		try {
 			for (int i = 0; i < 2; i++) {
 			}
@@ -656,13 +761,13 @@ public class Lista {
 				l.imprime();
 				}
 			}
-			
+
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 		return (l != null)? l : null;
 	}
-	
+
 	public void quickSort() {
 		Lista vetor = this;
 		quickSort(vetor, 0, vetor.getQtdNos() -1);
@@ -679,7 +784,7 @@ public class Lista {
 		for (int j = 0; j < vetor.getQtdNos(); j++) {
 			novo[j] = vetor.returnPos(j);
 		}
-		
+
 		No pivo = novo[inicio];
         int i = inicio + 1, f = fim;
         while (i <= f) {
@@ -697,15 +802,15 @@ public class Lista {
         }
         novo[inicio] = novo[f];
         novo[f] = pivo;
-        
+
         vetor.removeApartir(0);
         for (int j = 0; j < novo.length; j++) {
-        	
+
 			vetor.push_fim(novo[j]);
 		}
         return f;
 	}
-	
+
 	public void quickSort2() {
 		Lista vetor = this;
 		quickSort2(vetor, 0, vetor.getQtdNos() -1);
@@ -722,7 +827,7 @@ public class Lista {
 		for (int j = 0; j < vetor.getQtdNos(); j++) {
 			novo[j] = vetor.returnPos(j);
 		}
-		
+
 		No pivo = novo[inicio];
         int i = inicio + 1, f = fim;
         while (i <= f) {
@@ -740,15 +845,15 @@ public class Lista {
         }
         novo[inicio] = novo[f];
         novo[f] = pivo;
-        
+
         vetor.removeApartir(0);
         for (int j = 0; j < novo.length; j++) {
-        	
+
 			vetor.push_fim(novo[j]);
 		}
         return f;
 	}
-	
+
 	public boolean GeraContador() {
 		boolean ret = false;
 		if (isEmpty()) {
@@ -758,7 +863,7 @@ public class Lista {
 			int cont = 0;
 			while (temp.getNext() != null) {
 				temp.setContadorIrrisorio(cont);
-				
+
 				temp = temp.getNext();
 				cont++;
 			}
@@ -781,9 +886,9 @@ public class Lista {
 			l = lista;
 		} else {
 			l = new Lista();
-			
-			
-			
+
+
+
 		}
 		return l;
 	}
@@ -794,7 +899,7 @@ public class Lista {
 		Funcoes f = new Funcoes();
 		Lista l = new Lista();
 		l.setAtivaLogs(true);
-		
+
 //		l.push_fim(10, 0, 0);
 //		l.push_fim(20, 0, 1);
 //		l.push_fim(30, 0, 1);
@@ -819,16 +924,16 @@ public class Lista {
 //		l.pop_pos(8);
 		l.removeApartir(8);
 		l.imprime();
-		
+
 		System.out.println("--");
 //		System.out.println(l.temNoTempoZerado().getQuantum());
 //		System.out.println(l.pop_ini().getQuantum());;
 //		l.pop_ini().getQuantum();
-		
+
 		System.out.println("--");
 //		System.out.println(l.temNoTempoZerado().getQuantum());
-		
-		
+
+
 		for (int i = 0; i < 5; i++) {
 //			System.out.println(i + 1);
 //			f.waitSec(1);
@@ -836,7 +941,7 @@ public class Lista {
 	}
 	*/
 
-	
+
 	public static void main(String args[]) {
 		Lista l = new Lista();
 		l.push_fim(9);
@@ -847,11 +952,11 @@ public class Lista {
 //		l.imprime();
 		l.quickSort2();
 		l.imprime();
-		
-		
-		
-		
-		
+
+
+
+
+
 	}
 
 }

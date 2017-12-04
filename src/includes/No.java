@@ -8,22 +8,23 @@ public class No {
 	private int tempExecTotal, tempExec, Priori, ID, Relogio, DeadLineTotal, contadorIrrisorio, Quantum;
 	private int Estado; // 1- pronto, 2- Esperando, 3- Executando;
 	private int DadoComplementar = -1; // 1- pronto, 2- Esperando, 3- Executando;
-	private int tamanho = 0 ;
-	
+	private int tamanhoUsado = 0, tamanhoOrig = 0;
+	private No apontando = null;
+
 	public int getTempExec() {
 		return this.tempExec;
 	}
 	public void setTempExec(int tempExec) {
 		this.tempExec = tempExec;
 	}
-	
+
 	public int getPriori() {
 		return this.Priori;
 	}
 	public void setPriori(int priori) {
 		this.Priori = priori;
 	}
-	
+
 	public int getTempExecTotal() {
 		return this.tempExecTotal;
 	}
@@ -49,6 +50,12 @@ public class No {
 	public void setNext(No next) {
 		this.Next = next;
 	}
+	public No getApontando() {
+		return apontando;
+	}
+	public void setAponta(No apontando) {
+		this.apontando = apontando;
+	}
 	public int getEstado() {
 		return Estado;
 	}
@@ -73,6 +80,19 @@ public class No {
 	public void setContadorIrrisorio(int contadorIrrisorio) {
 		this.contadorIrrisorio = contadorIrrisorio;
 	}
+	public int getTamanhoUsado() {
+		return tamanhoUsado;
+	}
+	public void setTamanhoUsado(int tamanho) {
+		this.tamanhoUsado = tamanho;
+		setTamanhoOrig(tamanho);
+	}
+	public int getTamanhoOrig() {
+		return tamanhoOrig;
+	}
+	public void setTamanhoOrig(int tamanhoOrig) {
+		this.tamanhoOrig = tamanhoOrig;
+	}
 	public int generateID() {
 		Random random = new Random();
 		int valor = random.nextInt(1001);
@@ -82,7 +102,8 @@ public class No {
 	public int generateQuantum() {
 		Random random = new Random();
 		int valor = random.nextInt(21);
-		setQuantum(valor);;
+		valor = valor + 10;
+		setQuantum(valor);
 		return getQuantum();
 	}
 	public int generateDeadline() {
@@ -94,12 +115,12 @@ public class No {
 	public int generateTamanho() {
 		Random random = new Random();
 		int valor = random.nextInt(1057);
-		this.tamanho = valor;
-		return this.tamanho;
+		this.tamanhoUsado = valor;
+		return this.tamanhoUsado;
 	}
-	
-	
-	
+
+
+
 	public No(int Quantum) {
 		// TODO Auto-generated constructor stub
 		setTempExecTotal(Quantum);
@@ -188,6 +209,7 @@ public class No {
 		setEstado(node.getEstado());
 		setRelogio(node.getRelogio());
 		setDeadLineTotal(node.getDeadLineTotal());
+		setTamanhoUsado(node.getTamanhoUsado());
 	}
 	public No Entrega() {
 		// TODO Auto-generated method stub
@@ -203,6 +225,7 @@ public class No {
 		node.setEstado(getEstado());
 		node.setRelogio(getRelogio());
 		node.setDeadLineTotal(getDeadLineTotal());
+		node.setTamanhoUsado(getTamanhoUsado());
 		return node;
 	}
 	public No getHead() {

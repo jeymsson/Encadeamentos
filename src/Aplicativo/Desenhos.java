@@ -790,8 +790,16 @@ public class Desenhos extends JPanel {
 			getMemoria().setDesalocado(getMemoria().getDesalocado() - novoProcesso.getTamanhoUsado());
 		} else {
 			No temp = BuscaBestFit(getMemoria(), novoProcesso.getTamanhoOrig());
-			temp.Recebe(novoProcesso.Entrega());
-			this.memUsada = memUsada + novoProcesso.getTamanhoUsado();
+			
+			if(temp == null) {
+				System.out.println("Out of Memory");
+			} else {
+				System.out.println("Encontrado " + 
+						temp.getTamanhoOrig() + " tam nec "+ 
+						novoProcesso.getTamanhoOrig());
+				temp.Recebe(novoProcesso.Entrega());
+				this.memUsada = memUsada + novoProcesso.getTamanhoUsado();
+			}
 		}
 		return true;
 	}
@@ -932,8 +940,8 @@ public class Desenhos extends JPanel {
 				if(temp.getTempExecTotal() < 999999) {
 					// Texto
 					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
-					g2.drawString("TempExec= "+ temp.getTempExec(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
-					g2.drawString("TempExc Tot= "+ temp.getTempExecTotal(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
+					g2.drawString("Tamanho= "+ temp.getTamanhoUsado(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
+					g2.drawString("Tamanho Ori= "+ temp.getTamanhoOrig(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
 					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
 				}
 
@@ -981,8 +989,8 @@ public class Desenhos extends JPanel {
 				if(temp.getTempExecTotal() < 999999) {
 					// Texto
 					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
-					g2.drawString("TempExec= "+ temp.getTempExec(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
-					g2.drawString("TempExc Tot= "+ temp.getTempExecTotal(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
+					g2.drawString("Tamanho= "+ temp.getTamanhoUsado(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
+					g2.drawString("Tamanho Ori= "+ temp.getTamanhoOrig(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
 					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
 				}
 				// Mensagem diferenciada
