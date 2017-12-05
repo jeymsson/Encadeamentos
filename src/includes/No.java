@@ -7,6 +7,7 @@ public class No {
 	private No Back, Next;
 	private int tempExecTotal, tempExec, Priori, ID, Relogio, DeadLineTotal, contadorIrrisorio, Quantum;
 	private int Estado; // 1- pronto, 2- Esperando, 3- Executando;
+	private int Cor = 0; // 0- cinza, 1- azul;
 	private int DadoComplementar = -1; // 1- pronto, 2- Esperando, 3- Executando;
 	private int tamanhoUsado = 0, tamanhoOrig = 0;
 	private No apontando = null;
@@ -73,6 +74,12 @@ public class No {
 	}
 	public void setRelogio(int relogio) {
 		Relogio = relogio;
+	}
+	public int getCor() {
+		return Cor;
+	}
+	public void setCor(int cor) {
+		Cor = cor;
 	}
 	public int getContadorIrrisorio() {
 		return contadorIrrisorio;
@@ -210,6 +217,7 @@ public class No {
 		setRelogio(node.getRelogio());
 		setDeadLineTotal(node.getDeadLineTotal());
 		setTamanhoUsado(node.getTamanhoUsado());
+		setCor(node.getCor());
 	}
 	public No Entrega() {
 		// TODO Auto-generated method stub
@@ -226,6 +234,7 @@ public class No {
 		node.setRelogio(getRelogio());
 		node.setDeadLineTotal(getDeadLineTotal());
 		node.setTamanhoUsado(getTamanhoUsado());
+		node.setCor(getCor());
 		return node;
 	}
 	public No getHead() {

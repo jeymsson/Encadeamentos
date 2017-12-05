@@ -758,7 +758,50 @@ public class Desenhos extends JPanel {
 		this.repaint();
 	}
 
+	private void Aloca(Lista listaGen, No procNovo) {
+		// Tem memoria
+		if(listaGen.getTamanho() < procNovo.getTamanhoOrig()) {
+			System.out.println("OUT OF MEMORY");
+		} else if(listaGen.getTamanho() > procNovo.getTamanhoOrig()) {
+			split_Aloca(listaGen, procNovo);
+		} else {
+			No posMem = BuscaBestFit(getMemoriaLG(), procNovo.getTamanhoOrig());
+			procNovo.setCor(1);
+			posMem.getApontando().Recebe(procNovo.Entrega());
+			getMemoriaLG().libera(posMem);
+			getMemoriaLG().setDesalocado(getMemoriaLG().getDesalocado() - procNovo.getTamanhoOrig());
+		}
+	}
+	private void split_Aloca(Lista listaGen, No procNovo) {
+		if(listaGen.getTamanho() < procNovo.getTamanhoOrig()) {
+			System.out.println("OUT OF MEMORY");
+		} else if(listaGen.getTamanho() >= procNovo.getTamanhoOrig()) {
+			int diff = listaGen.getTamanho() - procNovo.getTamanhoOrig();
+			diff = diff < 0 ? diff *(-1) : diff;
+			
+			listaGen.pop_fim();
+			getMemoria().push_fim(procNovo);
+			No temp = getMemoria().getTail();
 
+			listaGen.push_fim(new No());
+			listaGen.getTail().setTamanhoOrig(procNovo.getTamanhoOrig());
+			listaGen.setDesalocado(listaGen.getDesalocado() - procNovo.getTamanhoOrig());
+			listaGen.getTail().setAponta(temp);
+			listaGen.push_fim(new No());
+			listaGen.getTail().setTamanhoOrig(diff);
+		}
+		
+	}
+	private void Dealoca(No ProcessoRem) {
+		No temp = getMemoria().buscaID(ProcessoRem.getID());
+		No libres = getMemoriaLG().getTail();
+		getMemoriaLG().pop_fim();
+		getMemoriaLG().push_fim(new No());
+		getMemoriaLG().setTamanho(ProcessoRem.getTamanhoOrig());
+		getMemoriaLG().getTail().setAponta(temp);
+		getMemoriaLG().push_fim(libres);
+		temp.setCor(1);
+	}
 
 
 	private boolean iniciaGerencMemoria(No algumCore, No novoProcesso) {

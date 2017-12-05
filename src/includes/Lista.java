@@ -959,4 +959,51 @@ public class Lista {
 
 	}
 
+	public boolean libera(No posMem) {
+		boolean ret = false;
+		if (isEmpty()) {
+			System.out.println("imprime: Lista Vazia");
+		} else {
+			No temp = getHead();
+			while (temp.getNext() != null && !ret) {
+				if(temp == posMem) {
+					ret = !ret;
+					break;
+				}
+
+				temp = temp.getNext();
+			}
+			if(temp == posMem && !ret) {
+				ret = !ret;
+			}
+			
+			if(ret) {
+				if(!isEmpty()) {
+					if(getHead() != getTail()) {
+						pop_fim();
+					} else {
+						if(temp.getNext() == null){
+							if(temp.getBack() == null){
+								//
+							} else {
+								temp.getNext().setBack(null);
+							}
+						} else {
+							if(temp.getBack() == null){
+								temp.getNext().setBack(null);
+							} else {
+								temp.getNext().setBack(temp.getBack());
+								temp.getNext().setBack(temp.getBack());
+							}
+						}
+						
+						temp.setNext(null);
+						temp.setBack(null);
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
 }
