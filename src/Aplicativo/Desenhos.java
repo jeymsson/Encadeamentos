@@ -328,7 +328,7 @@ public class Desenhos extends JPanel {
 			) {
 			// Funcoes.waitSec(1);
 			System.out.println("----------------");
-			// getCores().imprime(); // <-------------------------------------
+			 getCores().imprime(); // <-------------------------------------
 			// tem novo proceço?
 			// getCores().removeTempoExec(1);
 
@@ -347,7 +347,7 @@ public class Desenhos extends JPanel {
 						} else {
 							MemoriaDesaloca(temp);
 						}
-						temp.setRelogio(0);
+						temp.setRelogio(0); 
 						getPriori0().pop_ini();
 					}
 					temp = temp.getNext();
@@ -507,13 +507,14 @@ public class Desenhos extends JPanel {
 				}
 				temp = pri.pop_ini();
 				getCores().push_fim(temp);
+				getMemoria().push_fim(temp);;
 			// getPriori0().quickSort();
 			}
 
 //			iniciaGerencMemoria(getCores().getTail(), temp);
 
 
-			setBtnAdicionar(new JButton("BIBI"));
+			setBtnAdicionar(new JButton("ADICIONA PROC"));
 			btnAdicionar.setBounds(20, 20, 100, 420);
 			this.add(getBtnAdicionar());
 		}
@@ -676,9 +677,9 @@ public class Desenhos extends JPanel {
 				g2.setColor(Color.RED);
 				if(temp.getTempExecTotal() < 999999) {
 					// Texto
-					g2.drawString("TempExc Tot= "+ temp.getTempExecTotal(), getPulaNo() +4, posTemp + getAlturaNo()/4);
+					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
 					g2.drawString("TempExec= "+ temp.getTempExec(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
-					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
+					g2.drawString("TempExc Tot= "+ temp.getTempExecTotal(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
 					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
 				}
 
@@ -721,9 +722,9 @@ public class Desenhos extends JPanel {
 				g2.setColor(Color.RED);
 				if(temp.getTempExecTotal() < 999999) {
 					// Texto
-					g2.drawString("TempExc Tot= "+ temp.getTempExecTotal(), getPulaNo() +4, posTemp + getAlturaNo()/4);
+					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
 					g2.drawString("TempExec= "+ temp.getTempExec(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
-					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
+					g2.drawString("TempExc Tot= "+ temp.getTempExecTotal(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
 					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
 				}
 				// Mensagem diferenciada
@@ -807,6 +808,7 @@ public class Desenhos extends JPanel {
 	private boolean iniciaGerencMemoria(No algumCore, No novoProcesso) {
 		boolean ret = false;
 
+		Funcoes.dump("ID que deve ir: "+BuscaBestFit(getMemoria(), novoProcesso.getTamanhoOrig()).getID());
 		ret = MemoriaAlocar(novoProcesso);
 		
 		System.out.println("Entrou");
@@ -973,10 +975,17 @@ public class Desenhos extends JPanel {
 			int cont = 1;
 			String sub_texto = "";
 
+			int cor = 1;
 			boolean exibeProcs = true;
 			while (temp != null  && temp.getNext() != null && cont < 7  && exibeProcs) {
-
-				g2.setColor(new Color(86, 146, 246));;
+				
+				if(cor == 0)
+					g2.setColor(new Color(194, 194, 194));
+				else if(cor == 1)
+					g2.setColor(new Color(86, 146, 246));;
+				
+				g.fillRect(getPulaNo(), posTemp, getLargNo(), getAlturaNo());
+				g2.setColor(Color.BLACK);
 				g2.draw( new Rectangle2D.Double(getPulaNo(), posTemp, getLargNo(), getAlturaNo()));
 
 				g2.setColor(Color.RED);
@@ -1025,7 +1034,13 @@ public class Desenhos extends JPanel {
 
 			// Ultimo no
 			if(temp != null && exibeProcs) {
-				g2.setColor(new Color(86, 146, 246));;
+				if(cor == 0)
+					g2.setColor(new Color(194, 194, 194));
+				else if(cor == 1)
+					g2.setColor(new Color(86, 146, 246));;
+				
+				g.fillRect(getPulaNo(), posTemp, getLargNo(), getAlturaNo());
+				g2.setColor(Color.BLACK);
 				g2.draw( new Rectangle2D.Double(getPulaNo(), posTemp, getLargNo(), getAlturaNo()));
 
 				g2.setColor(Color.RED);
@@ -1091,5 +1106,3 @@ public class Desenhos extends JPanel {
 	}
 
 }
-
-
