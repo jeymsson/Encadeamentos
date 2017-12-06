@@ -90,13 +90,15 @@ public class Lista {
 			while (temp.getNext() != null) {
 				System.out.println("Temp exec.: '" + temp.getTempExec()
 								+ "' Prioridade: '"+ temp.getPriori() +"'"
-								+ "' Relogio: '"+ temp.getRelogio() +"'");
+								+ "' Relogio: '"+ temp.getRelogio() +"'"
+								+ "' ID: '"+ temp.getID() +"'");
 
 				temp = temp.getNext();
 			}
 			System.out.println("Temp exec.: '" + temp.getTempExec()
 			+ "' Prioridade: '"+ temp.getPriori() +"'"
-			+ "' Relogio: '"+ temp.getRelogio() +"'");
+			+ "' Relogio: '"+ temp.getRelogio() +"'"
+			+ "' ID: '"+ temp.getID() +"'");
 		}
 	}
 	public void imprimeID() {

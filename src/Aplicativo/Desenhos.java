@@ -332,7 +332,8 @@ public class Desenhos extends JPanel {
 			// tem novo proceço?
 			// getCores().removeTempoExec(1);
 
-
+//			verificaExistencia();
+			 
 			No temp = new No();
 			No pri_temp = null;
 			int priori = 0;
@@ -496,6 +497,16 @@ public class Desenhos extends JPanel {
 				}
 			}
 		});
+	}
+	private void verificaExistencia() {
+		No temp = new No();
+		temp = getMemoria().getHead();
+		int id = 0;
+		while (temp != null && temp.getNext() != null) {
+			id = temp.getID();
+			if(getCores().buscaID(id) == null)
+				MemoriaDesaloca(temp);
+		}
 	}
 	private void iniciaCores(boolean Prioris) {
 		// TODO Auto-generated method stub
@@ -813,9 +824,13 @@ public class Desenhos extends JPanel {
 
 
 	private boolean iniciaGerencMemoria(No algumCore, No novoProcesso) {
+		Funcoes.dump("Entrou em Aloca");
 		boolean ret = false;
-
-		Funcoes.dump("ID que deve ir: "+BuscaBestFit(getMemoria(), novoProcesso.getTamanhoOrig()).getID());
+		try {
+			Funcoes.dump("ID que deve ir: "+BuscaBestFit(getMemoria(), novoProcesso.getTamanhoOrig()).getID());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		ret = MemoriaAlocar(novoProcesso);
 		
 		System.out.println("Entrou");
@@ -1100,6 +1115,7 @@ public class Desenhos extends JPanel {
 		// TODO Auto-generated method stub
 		int id = procLiberar.getID();
 		
+		Funcoes.dump("Entrou em desaloca");
 		No removivel = getMemoria().buscaID(id);
 		int tam = procLiberar.getTamanhoUsado();
 		No limpo = new No();

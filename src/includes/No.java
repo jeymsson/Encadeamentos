@@ -108,7 +108,7 @@ public class No {
 	}
 	public int generateQuantum() {
 		Random random = new Random();
-		int valor = random.nextInt(21);
+		int valor = random.nextInt(21)+10;
 		valor = valor + 10;
 		setQuantum(valor);
 		return getQuantum();

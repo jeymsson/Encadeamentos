@@ -208,7 +208,7 @@ public class Aplicativo {
 			panel.add(lblAlocadorDeMemoria, gbc_lblAlocadorDeMemoria);
 		
 		JComboBox comboMem = new JComboBox();
-			comboMem.setModel(new DefaultComboBoxModel(new String[] {"0 - Nenhum", "1 - Best-Fit", "2 - Quick-Fit", "3 - Merge-Fit"}));
+			comboMem.setModel(new DefaultComboBoxModel(new String[] {"1 - Best-Fit", "2 - Quick-Fit", "3 - Merge-Fit"}));
 			GridBagConstraints gbc_comboMem = new GridBagConstraints();
 			gbc_comboMem.insets = new Insets(0, 0, 5, 5);
 			gbc_comboMem.fill = GridBagConstraints.HORIZONTAL;
@@ -247,7 +247,7 @@ public class Aplicativo {
 				Funcoes f = new Funcoes();
 				String NumCores, NumProcessos, comboEsc, Deadline, txtMemoria;
 				int escl = comboEscalonamento.getSelectedIndex();
-				int escl_Mem = comboMem.getSelectedIndex();
+				int escl_Mem = comboMem.getSelectedIndex() +1;
 
 //				
 				escl = 1;
