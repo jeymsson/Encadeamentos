@@ -339,10 +339,17 @@ public class Desenhos extends JPanel {
 
 			if (!getAtivaRoundRobin()) {
 				temp = getCores().getHead();
+				No oco = new No();
 				while (temp != null && temp.getNext() != null) {
 
 					if(temp.getTempExec() <= 0 || temp.getRelogio() >= temp.getDeadLineTotal() +1) {
+						oco.setTamanhoOrig(temp.getTamanhoOrig());
 						if (getPriori0().getHead() != null) {
+							try {
+								getMemoria().buscaID(getPriori0().getHead().getID()).Recebe(oco);;
+							} catch (Exception e) {
+								// TODO: handle exception
+							}
 							iniciaGerencMemoria(temp, getPriori0().getHead().Entrega());
 						} else {
 							MemoriaDesaloca(temp);

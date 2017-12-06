@@ -37,6 +37,7 @@ public class Aplicativo {
 	private boolean ativaLogs = false;
 	private int intNumCores, intNumProcessos;
 	private JTextField txtDeadline;
+	private JTextField txtMemoriaTam;
 
 	public boolean getAtivaLogs() {
 		return ativaLogs;
@@ -138,7 +139,7 @@ public class Aplicativo {
 			panel.add(lblNumProcessos, gbc_lblNumProcessos);
 
 		txtNumProcessos = new JTextField();
-		txtNumProcessos.setText("20");
+		txtNumProcessos.setText("10");
 		gbc_txtNumProcessos.insets = new Insets(0, 0, 5, 5);
 		gbc_txtNumProcessos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtNumProcessos.gridx = 2;
@@ -217,18 +218,21 @@ public class Aplicativo {
 		
 		JLabel lblTamMem = new JLabel("Tamanho Mem\u00F3ria");
 			GridBagConstraints gbc_lblTamMem = new GridBagConstraints();
+			gbc_lblTamMem.anchor = GridBagConstraints.EAST;
 			gbc_lblTamMem.insets = new Insets(0, 0, 5, 5);
 			gbc_lblTamMem.gridx = 1;
 			gbc_lblTamMem.gridy = 6;
 			panel.add(lblTamMem, gbc_lblTamMem);
 		
-		JSlider slider = new JSlider();
-			GridBagConstraints gbc_slider = new GridBagConstraints();
-			gbc_slider.fill = GridBagConstraints.HORIZONTAL;
-			gbc_slider.insets = new Insets(0, 0, 5, 5);
-			gbc_slider.gridx = 2;
-			gbc_slider.gridy = 6;
-			panel.add(slider, gbc_slider);
+		txtMemoriaTam = new JTextField();
+		txtMemoriaTam.setText("2048");
+		txtMemoriaTam.setColumns(10);
+		GridBagConstraints gbc_txtMemoriaTam = new GridBagConstraints();
+		gbc_txtMemoriaTam.insets = new Insets(0, 0, 5, 5);
+		gbc_txtMemoriaTam.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtMemoriaTam.gridx = 2;
+		gbc_txtMemoriaTam.gridy = 6;
+		panel.add(txtMemoriaTam, gbc_txtMemoriaTam);
 
 
 		JButton btnIniciar = new JButton("INICIAR");
@@ -241,7 +245,7 @@ public class Aplicativo {
 			public void actionPerformed(ActionEvent arg0) {
 
 				Funcoes f = new Funcoes();
-				String NumCores, NumProcessos, comboEsc, Deadline;
+				String NumCores, NumProcessos, comboEsc, Deadline, txtMemoria;
 				int escl = comboEscalonamento.getSelectedIndex();
 				int escl_Mem = comboMem.getSelectedIndex();
 
@@ -250,6 +254,7 @@ public class Aplicativo {
 				NumCores = txtNumCores.getText();
 				NumProcessos = txtNumProcessos.getText();
 				Deadline = txtDeadline.getText();
+				txtMemoria = txtMemoriaTam.getText();
 				comboEsc = (escl != 0) ? f.int2string(escl) : "" ;
 				// boolean edita  = chckbxAtivo.isSelected();
 
@@ -264,6 +269,7 @@ public class Aplicativo {
 					if (ok) ok = f.validaForm(comboEsc, "Escalonamento");
 					if (ok) ok = f.validaForm(NumCores, "Nº Cores");
 					if (ok) ok = f.validaForm(NumProcessos, "Nº Processos");
+					if (ok) ok = f.validaForm(txtMemoria, "Tam Memoria");
 					if(escl == 3) {
 						if (ok) ok = f.validaForm(Deadline, "Deadline");
 					}
@@ -292,7 +298,7 @@ public class Aplicativo {
 										+ ", Shortest Job First");
 							}
 							
-							Desenhos desenho = new Desenhos(1, Cores, Processos, escl_Mem, false, tam_mem);
+							Desenhos desenho = new Desenhos(1, Cores, Processos, escl_Mem, false, f.string2int(txtMemoria));
 							frame.getContentPane().add(desenho);
 							frame.setSize(800, 600);
 							frame.setVisible(true);
