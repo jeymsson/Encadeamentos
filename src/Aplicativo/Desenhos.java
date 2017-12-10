@@ -15,6 +15,10 @@ import includes.Funcoes;
 import includes.Lista;
 import includes.No;
 
+//
+// 393, 396, 741, 788
+//
+
 @SuppressWarnings("serial")
 public class Desenhos extends JPanel {
 
@@ -27,6 +31,7 @@ public class Desenhos extends JPanel {
 	int auto_increment = 0;
 	int memUsada = 0;
 	int TamanhoTotal = 0, TamanhoDeselocado = 0;
+	int botaoAdd = 0;
 
 	LTG LTG;
 
@@ -93,6 +98,11 @@ public class Desenhos extends JPanel {
 		return TamanhoDeselocado;
 	}
 	public void setTamanhoDeselocado(int tamanhoDeselocado) {
+		tamanhoDeselocado = tamanhoDeselocado < 0 
+							? 0 
+							: tamanhoDeselocado > getTamanhoTotal()
+								? getTamanhoTotal()
+								: tamanhoDeselocado;
 		TamanhoDeselocado = tamanhoDeselocado;
 	}
 	public int getTipo() {
@@ -118,6 +128,12 @@ public class Desenhos extends JPanel {
 	}
 	public void setAlturaNo(int alturaNo) {
 		this.alturaNo = alturaNo;
+	}
+	public int getBotaoAdd() {
+		return botaoAdd;
+	}
+	public void setBotaoAdd(int botaoAdd) {
+		this.botaoAdd = botaoAdd;
 	}
 	public int getNumCores() {
 		return numCores;
@@ -449,26 +465,37 @@ public class Desenhos extends JPanel {
 
 		getBtnAdicionar().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "Adicionando Processos, para cancelar clique no 'X' para parar.");
-
-				Lista list = new Lista();
-				auto_increment = list.populaLista(1, (getTipo() == 2) ? true : false, auto_increment+1);
-
-				No temp = list.getHead();
-				temp.setCor(1); //-------------------------------------
-				System.out.println(" ---------> ID"+temp.getID() + "tam:"+temp.getTamanhoOrig());
-				if (temp.getTamanhoOrig() <= getTamanhoDeselocado()) {
-					int priori = (getTipo() == 2)? temp.getPriori() : 0;
-					
-					
-					if ((getTipo() == 2) ? true : false) {
-						getPrioridade(priori).push_fim_no(temp.Entrega());
-					} else {
-						getPriori0().push_fim_no(temp.Entrega());
-					}
-					if(getTipo() == 3) {
-						getPriori0().quickSort2();
-					}
+				setBotaoAdd(getBotaoAdd()+1);
+				if (getBotaoAdd() == 1) {
+					Thread thread = new Thread(){
+						public void run(){
+							JOptionPane.showMessageDialog(null, "Adicionando Processos, para cancelar clique no 'X' para parar.");
+							
+							Lista list = new Lista();
+							auto_increment = list.populaLista(1, (getTipo() == 2) ? true : false, auto_increment+1);
+							
+							No temp = list.getHead();
+							temp.setCor(1); //-------------------------------------
+							temp.setTamanhoUsado(102);
+							System.out.println(" ---------> ID"+temp.getID() + "tam:"+temp.getTamanhoOrig());
+							if (temp.getTamanhoOrig() <= getTamanhoDeselocado()) {
+								int priori = (getTipo() == 2)? temp.getPriori() : 0;
+								
+								
+								if ((getTipo() == 2) ? true : false) {
+									getPrioridade(priori).push_fim_no(temp.Entrega());
+								} else {
+									getPriori0().push_fim_no(temp.Entrega());
+								}
+								if(getTipo() == 3) {
+									getPriori0().quickSort2();
+								}
+							}
+							boolean excluir = false;
+							setBotaoAdd(0);
+						}
+					};
+					thread.start();
 				}
 			}
 		});
@@ -721,16 +748,16 @@ public class Desenhos extends JPanel {
 			getMemoriaLG().getTail().setAponta(proc);
 			setTamanhoDeselocado(getTamanhoDeselocado() + proc.getTamanhoOrig());
 		} else {
-			int id_rem = 7777;
-			temp.setCor(0);
-//			getMemoriaLG().push_ini_no(new No());
-			proc.setID(id_rem);
-//			getMemoriaLG().getHead().Recebe(proc.Entrega());
-//			getMemoriaLG().getHead().setAponta(proc);
-			setTamanhoDeselocado(getTamanhoDeselocado() + proc.getTamanhoOrig());
+//			int id_rem = 7777;
+//			temp.setCor(0);
+			//getMemoriaLG().push_ini_no(new No());
+//			proc.setID(id_rem);
+			//getMemoriaLG().getHead().Recebe(proc.Entrega());
+			//getMemoriaLG().getHead().setAponta(proc);
+//			setTamanhoDeselocado(getTamanhoDeselocado() + proc.getTamanhoOrig());
+			boolean excluir = true;
 		}
 		System.out.println(getTamanhoDeselocado());
-		boolean excluir = true;
 	}
 	private void MemAloca(No Entrando) {
 		
@@ -758,6 +785,7 @@ public class Desenhos extends JPanel {
 					if (busca != null) {
 						busca.Recebe(novo.Entrega());
 					} else {
+						Entrando.setTamanhoOrig(Entrando.getTamanhoUsado());
 						getMemoria().push_fim(Entrando.Entrega());
 					}
 					
@@ -1037,7 +1065,7 @@ public class Desenhos extends JPanel {
 			String sub_texto = "";
 
 			boolean exibeProcs = true;
-			while (temp != null  && temp.getNext() != null && cont < 7  && exibeProcs) {
+			while (temp != null  && cont < 7  && exibeProcs) {
 				
 				if(temp.getCor() == 0)
 					g2.setColor(new Color(194, 194, 194));
@@ -1053,9 +1081,9 @@ public class Desenhos extends JPanel {
 				if(temp.getTempExecTotal() < 999999) {
 					// Texto
 					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
-					g2.drawString("Tamanho= "+ temp.getTamanhoUsado(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
-					g2.drawString("Tamanho Ori= "+ temp.getTamanhoOrig(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
-					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
+//					g2.drawString("Tamanho= "+ temp.getTamanhoUsado(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
+					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
+					g2.drawString("Tam Ori= "+ temp.getTamanhoOrig(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
 				} else if(temp.getTamanhoUsado() ==0) {
 					// Texto
 					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
@@ -1079,7 +1107,11 @@ public class Desenhos extends JPanel {
 				}
 
 				//Distancia de um no a outro
-				temp = temp.getNext();
+				if (temp.getNext() != null) {
+					temp = temp.getNext();
+				} else {
+					break;
+				}
 				int dist = 20;
 				dist = 0;
 				setPulaNo(getPulaNo() + getLargNo() + dist);
@@ -1097,7 +1129,7 @@ public class Desenhos extends JPanel {
 			}
 
 			// Ultimo no
-			if(temp != null && exibeProcs) {
+			/*if(temp != null && exibeProcs) {
 				if(temp.getCor() == 0)
 					g2.setColor(new Color(194, 194, 194));
 				else if(temp.getCor() == 1)
@@ -1134,7 +1166,7 @@ public class Desenhos extends JPanel {
 					sub_texto = "Tamanho= " + temp.getTamanhoUsado();
 					g2.drawString(sub_texto, getPulaNo() +4, posTemp + getAlturaNo()/3+ 46);
 				}
-			}
+			}*/
 
 
 			// Memoria Total
