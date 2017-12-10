@@ -87,18 +87,37 @@ public class Lista {
 			System.out.println("imprime: Lista Vazia");
 		} else {
 			No temp = getHead();
+			System.out.println(getNomeLista());
+			while (temp != null) {
+				System.out.println("' ID: '"+ temp.getID() +"'"
+								+ "' Cor: '"+ temp.getCor() +"'"
+								+ "' Tamanho Ori: '"+ temp.getTamanhoOrig() +"'"
+								+ "' Tamanho Usa: '"+ temp.getTamanhoUsado() +"'");
+
+				if (temp.getNext() != null) {
+					temp = temp.getNext();
+				} else {
+					break;
+				}
+			}
+		}
+	}
+	public void imprimeMem() {
+		if (isEmpty()) {
+			System.out.println("imprime: Lista Vazia");
+		} else {
+			System.out.println(getNomeLista());
+			No temp = getHead();
 			while (temp.getNext() != null) {
-				System.out.println("Temp exec.: '" + temp.getTempExec()
-								+ "' Prioridade: '"+ temp.getPriori() +"'"
-								+ "' Relogio: '"+ temp.getRelogio() +"'"
-								+ "' ID: '"+ temp.getID() +"'");
+				System.out.println("ID: '" + temp.getID()
+								+ "' Tamanho Usado: '"+ temp.getTamanhoUsado() +"'"
+								+ "' Tamanho Original: '"+ temp.getTamanhoOrig() +"'");
 
 				temp = temp.getNext();
 			}
-			System.out.println("Temp exec.: '" + temp.getTempExec()
-			+ "' Prioridade: '"+ temp.getPriori() +"'"
-			+ "' Relogio: '"+ temp.getRelogio() +"'"
-			+ "' ID: '"+ temp.getID() +"'");
+			System.out.println("ID: '" + temp.getID()
+			+ "' Tamanho Usado: '"+ temp.getTamanhoUsado() +"'"
+			+ "' Tamanho Original: '"+ temp.getTamanhoOrig() +"'");
 		}
 	}
 	public void imprimeID() {
@@ -407,6 +426,48 @@ public class Lista {
 		return rem;
 
 	}
+	public No pop_ID(int ID) {
+		No ret = null;
+		if(!isEmpty() && getHead() == getTail()) {
+			pop_fim();
+		} else if (!isEmpty()) {
+			No temp = getHead();
+			while (temp.getNext() != null) {
+				if(temp.getID() == ID) {
+					break;
+				}
+				temp = temp.getNext();
+			}
+			if(temp.getID() == ID) {
+				ret = temp;
+			}
+			
+			if (ret != null) {
+				No ant = ret.getBack();
+				No post = ret.getNext();
+				
+				if (ant != null && post != null) {
+					ant.setNext(post);
+					post.setBack(ant);
+				} else if(ant == null && post == null) {
+					//
+				} else {
+					if (ant == null) {
+						post.setBack(ant);
+						setHead(post);
+					}
+					if (post == null) {
+						ant.setNext(post);
+						setTail(ant);
+					}
+				}
+				ret.setNext(null);
+				ret.setBack(null);
+			}
+		}
+		return ret;
+
+	}
 
 
 	public int populaLista(int numNos) {
@@ -431,15 +492,36 @@ public class Lista {
 		}
 		return auto_increment;
 	}
-	public void populaLista(int numNos, boolean usaPrioridade) {
-		if(false) {
-
+	public int populaLista(int numNos, boolean usaPrioridade) {
+		int auto_increment = 0;
+		if(!usaPrioridade) {
+			auto_increment++;
+			push_fim(6);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(100);
+			push_fim(8);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(200);
+			push_fim(10);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(300);
 			push_fim(12);
-			push_fim(12);
-			push_fim(12);
-			push_fim(9);
-			push_fim(9);
-			push_fim(9);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(400);
+//			push_fim(14);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(500);
+//			getTail().setTamanhoUsado(400);
+			push_fim(16);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(50);
+			
+//			push_fim(12);
+//			push_fim(12);
+//			push_fim(12);
+//			push_fim(9);
+//			push_fim(9);
+//			push_fim(9);
 
 //			push_fim(3, 0);
 //			push_fim(5, 0);
@@ -488,6 +570,7 @@ public class Lista {
 				}
 			}
 		}
+		return auto_increment;
 	}
 	public int populaLista(int numNos, boolean usaPrioridade, int inicCom) {
 		if(false) {
@@ -532,17 +615,22 @@ public class Lista {
 			} else {
 				Random random = new Random();
 				int valor, priori;
+				numNos = 1;
+				int tam = 32;
 				for (int i = 0; i < numNos; i++) {
 					valor = random.nextInt(21);
 					valor = valor < 4 ? 4 : valor;
+					tam = 32 + random.nextInt(993);
 
 					if(usaPrioridade) {
 						priori = random.nextInt(4);
 						push_fim(valor, priori);
 						getTail().setID(inicCom);
+						getTail().setTamanhoUsado(tam);
 					} else {
 						push_fim(valor);
 						getTail().setID(inicCom);
+						getTail().setTamanhoUsado(tam);
 					}
 					inicCom++;
 				}
@@ -943,8 +1031,145 @@ public class Lista {
 	}
 	*/
 
+	public Lista inexistentesEm2(Lista lLivre) {
+		Lista ret = new Lista();
+		No temp = getHead();
+		No tempMem;
+		int count;
+		for (int i = 0; i < getQtdNos(); i++) {
+			tempMem = lLivre.getHead();
+			count = 0;
+			for (int j = 0; j < getQtdNos(); j++) {
+				if(tempMem.getID() == temp.getID()) {
+					count++;
+					break;
+				}
+				
+				if(tempMem.getNext() != null) {
+					tempMem = tempMem.getNext();
+				}
+			}
+			if(count == 0) {
+				ret.push_fim(temp);
+			}
+			
+			if(temp.getNext() != null) {
+				temp = temp.getNext();
+			}
+		}
+		if(ret.isEmpty())
+			ret = null;
+		return ret;
+	}
+	public Lista[] inexistentesEm(Lista lLivre) {
+		Lista[] ret = new Lista[2];
+		ret[0] = new Lista();
+		ret[1] = new Lista();
+		No temp = getHead();
+		No tempMem;
+		int count;
+		
+		while (temp != null) {
+			count = 0;
+			tempMem = lLivre.getHead();
 
+			while (tempMem != null) {
+				if(tempMem.getID() == temp.getID()) {
+					count++;
+					break;
+				}
+				if(tempMem.getNext() != null) {
+					tempMem = tempMem.getNext();
+				} else {
+					break;
+				}
+			}
+			if(count == 0) {
+				ret[0].push_fim(temp);
+				ret[1].push_fim(tempMem);
+			}
+			if(temp.getNext() != null) {
+				temp = temp.getNext();
+			} else {
+				break;
+			}
+		}
+
+		if(ret[0].isEmpty())
+			ret[0] = null;
+		if(ret[1].isEmpty())
+			ret[1] = null;
+		return ret;
+	}
+	
+	public No BuscaBestFit(int tamanho) {
+		No melhorPos = null;
+		if(!isEmpty()) {
+			melhorPos = null;
+			int diffAnt = 999999, diff = 0, tamPos = 0;
+			No temp = getHead();
+			
+			while (temp.getNext() != null) {
+				tamPos = temp.getTamanhoOrig();
+				diff = tamPos - tamanho;
+				diff = diff < 0 ? diff*(-1) : diff;
+				
+				if (diff == 0) {
+					return temp;
+				} else if (diff < diffAnt && tamPos >= tamanho) {
+					melhorPos = temp;
+					diffAnt = diff;
+				}
+				
+				temp = temp.getNext();
+			}
+			
+			tamPos = temp.getTamanhoOrig();
+			diff = tamPos - tamanho;
+			diff = diff < 0 ? diff*(-1) : diff;
+			if (diff == 0) {
+				return temp;
+			} else if (diff < diffAnt && tamPos >= tamanho) {
+				melhorPos = temp;
+			}
+		}
+		return melhorPos;
+	}
+	
+	
 	public static void main(String args[]) {
+		Lista l1 = new Lista();
+
+		No no = new No();
+		no.setTamanhoUsado(40);
+		
+		no.setID(1);
+		l1.push_fim(no.Entrega());
+		l1.getTail().imprime();
+		System.out.println("--");
+		no.setID(2);
+		l1.push_fim(no.Entrega());
+		l1.getTail().imprime();
+		System.out.println("--");
+		no.setID(3);
+		l1.push_fim(no.Entrega());
+		l1.getTail().imprime();
+		System.out.println("----");
+
+		l1.pop_ID(2);
+
+		System.out.println();
+		l1.imprimeID();
+		
+//		if (temp == null) {
+//			System.out.println("nulo");
+//		} else {
+//			System.out.println("Retornado:");
+//			temp.imprime();
+//		}
+	}
+
+	public static void main3(String args[]) {
 		Lista l = new Lista();
 		l.push_fim(9);
 		l.push_fim(8);

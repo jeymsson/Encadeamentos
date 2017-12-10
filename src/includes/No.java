@@ -5,8 +5,8 @@ import java.util.Random;
 public class No {
 
 	private No Back, Next;
-	private int tempExecTotal, tempExec, Priori, ID, Relogio, DeadLineTotal, contadorIrrisorio, Quantum;
-	private int Estado; // 1- pronto, 2- Esperando, 3- Executando;
+	private int tempExecTotal, tempExec, Priori, _ID, Relogio, DeadLineTotal, contadorIrrisorio, Quantum;
+	private int Estado; // 1- pronto, 2- Esperando, 3- Executando, 4-Removido;
 	private int Cor = 0; // 0- cinza, 1- azul;
 	private int DadoComplementar = -1; // 1- pronto, 2- Esperando, 3- Executando;
 	private int tamanhoUsado = 0, tamanhoOrig = 0;
@@ -64,10 +64,10 @@ public class No {
 		Estado = estado;
 	}
 	public int getID() {
-		return ID;
+		return _ID;
 	}
 	public void setID(int iD) {
-		ID = iD;
+		_ID = iD;
 	}
 	public int getRelogio() {
 		return Relogio;
@@ -92,7 +92,8 @@ public class No {
 	}
 	public void setTamanhoUsado(int tamanho) {
 		this.tamanhoUsado = tamanho;
-		setTamanhoOrig(tamanho);
+		if(getTamanhoOrig() == 0)
+			setTamanhoOrig(tamanho);
 	}
 	public int getTamanhoOrig() {
 		return tamanhoOrig;
@@ -103,8 +104,8 @@ public class No {
 	public int generateID() {
 		Random random = new Random();
 		int valor = random.nextInt(1001);
-		this.ID = valor;
-		return this.ID;
+		this._ID = valor;
+		return this._ID;
 	}
 	public int generateQuantum() {
 		Random random = new Random();
@@ -252,6 +253,27 @@ public class No {
 	}
 	public void setDeadLineTotal(int deadLineTotal) {
 		DeadLineTotal = deadLineTotal;
+	}
+	public void imprimeT() {
+		// TODO Auto-generated method stub
+		System.out.println("TempExecTotal: " +getTempExecTotal());
+		System.out.println("TempExec: " +getTempExec());
+		System.out.println("Priori: " +getPriori());
+		System.out.println("DadoComplementar: " +getDadoComplementar());
+		System.out.println("ID: " +getID());
+		System.out.println("Quantum: " +getQuantum());
+		System.out.println("Estado: " +getEstado());
+		System.out.println("Relogio: " +getRelogio());
+		System.out.println("DeadLineTotal: " +getDeadLineTotal());
+		System.out.println("TamanhoUsado: " +getTamanhoUsado());
+		System.out.println("Cor: " +getCor());
+	}
+	public void imprime() {
+		// TODO Auto-generated method stub
+		System.out.print("ID: " +getID());
+		System.out.print(" - TamanhoUsado: " +getTamanhoUsado());
+		System.out.print(" - TamanhoOriginal: " +getTamanhoOrig());
+		System.out.println(" - Cor: " +getCor());
 	}
 
 

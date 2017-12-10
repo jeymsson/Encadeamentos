@@ -18,14 +18,15 @@ import includes.No;
 @SuppressWarnings("serial")
 public class Desenhos extends JPanel {
 
-	private int tipo;
+	private int tipo, tipo_mem;
 	private int pulaNo = 0, largNo= 104, alturaNo= 80;
 	int numCores, numProcs;
-	private boolean iniciou = false, ativaDeadLine = false, ativaRoundRobin = false, boolAdicionar = false;
+	private boolean iniciou = false, ativaDeadLine = false, ativaRoundRobin = false, boolAdicionar = false, log = false;
 	private boolean iniciouEstatisticas = false;
 	JButton btnAdicionar;
 	int auto_increment = 0;
 	int memUsada = 0;
+	int TamanhoTotal = 0, TamanhoDeselocado = 0;
 
 	LTG LTG;
 
@@ -82,8 +83,23 @@ public class Desenhos extends JPanel {
 	public void setPriori3(Lista priori3) {
 		this.priori3 = priori3;
 	}
+	public int getTamanhoTotal() {
+		return TamanhoTotal;
+	}
+	public void setTamanhoTotal(int tamanhoTotal) {
+		TamanhoTotal = tamanhoTotal;
+	}
+	public int getTamanhoDeselocado() {
+		return TamanhoDeselocado;
+	}
+	public void setTamanhoDeselocado(int tamanhoDeselocado) {
+		TamanhoDeselocado = tamanhoDeselocado;
+	}
 	public int getTipo() {
 		return tipo;
+	}
+	public int getTipo_mem() {
+		return tipo_mem;
 	}
 	public int getPulaNo() {
 		return pulaNo;
@@ -173,6 +189,12 @@ public class Desenhos extends JPanel {
 
 	// ------------------
 
+	public boolean getLog() {
+		return log;
+	}
+	public void setLog(boolean log) {
+		this.log = log;
+	}
 	public static Lista getMemoria() {
 		return Memoria;
 	}
@@ -212,8 +234,10 @@ public class Desenhos extends JPanel {
 			getPriori0().quickSort2();
 		}
 		System.out.println("----");
-		getPriori0().imprime();
-		System.out.println("----");
+		if (getLog()){
+			getPriori0().imprime();
+			System.out.println("----");
+		}
 		getPriori0().setNomeLista("Aptos");
 
 		iniciaCores(false);
@@ -260,19 +284,21 @@ public class Desenhos extends JPanel {
 		System.out.println("-Populada-");
 		// temp.imprime();
 		System.out.println("-0-");
-		getPrioridade(0).imprime();
-		System.out.println("-1-");
-		getPrioridade(1).imprime();
-		System.out.println("-2-");
-		getPrioridade(2).imprime();
-		System.out.println("-3-");
-		getPrioridade(3).imprime();
+		if (getLog()){
+			getPrioridade(0).imprime();
+			System.out.println("-1-");
+			getPrioridade(1).imprime();
+			System.out.println("-2-");
+			getPrioridade(2).imprime();
+			System.out.println("-3-");
+			getPrioridade(3).imprime();
+		}
 
 
-		// getPriori0().quickSort();
-		// System.out.println("----");
-		getPriori0().imprime();
-		System.out.println("----");
+		if (getLog()){
+			getPriori0().imprime();
+			System.out.println("----");
+		}
 		// getPriori0().setNomeLista("Aptos");
 
 		iniciaCores(true);
@@ -280,7 +306,10 @@ public class Desenhos extends JPanel {
 
 	@SuppressWarnings("static-access")
 	public Desenhos(int tipo, int numCores, int numProcs, int escl_Mem, boolean fazNada, int tamMemoria) {
+		if (getLog())
+			System.out.println("Inicia construtr 'Desenhos'3 .");
 		this.tipo = tipo;
+		this.tipo_mem = escl_Mem;
 
 		func = new Funcoes();
 		this.Cores = new Lista();
@@ -293,7 +322,7 @@ public class Desenhos extends JPanel {
 		setNumProcs(numProcs);
 
 		Lista temp = new Lista();
-		this.auto_increment = temp.populaLista(getNumProcs());
+		this.auto_increment = temp.populaLista(getNumProcs(), false);
 		setPriori0(temp);
 		getPriori0().quickSort();
 		System.out.println("----");
@@ -301,18 +330,17 @@ public class Desenhos extends JPanel {
 		System.out.println("----");
 		getPriori0().setNomeLista("Aptos");
 
+		getMemoriaLG().setNomeLista("Memoria Lista Generica");
+		getMemoria().setNomeLista("Memoria Final");
+		
 		getMemoriaLG().setTamanho(tamMemoria);
 		getMemoria().setTamanho(tamMemoria);
 		// Head
-		getMemoriaLG().push_fim_no(new No());
-		// Tail
-		getMemoriaLG().push_fim_no(new No());
-		getMemoriaLG().getHead().setID(777777);;
-		getMemoriaLG().getTail().setID(888888);;
-
 		getMemoriaLG().setTamanho(tamMemoria);
-
-
+		
+		setTamanhoTotal(tamMemoria);
+		setTamanhoDeselocado(tamMemoria);
+		
 
 		iniciaCores(false);
 	}
@@ -320,6 +348,8 @@ public class Desenhos extends JPanel {
 
 	@SuppressWarnings("unused")
 	private void iniciaLTG() {
+		if (getLog())
+			System.out.println("Inicia 'iniciaLTG()' .");
 		// TODO Auto-generated method stub
 		Lista core = getCores();
 		Lista pri = null;
@@ -328,7 +358,9 @@ public class Desenhos extends JPanel {
 			) {
 			// Funcoes.waitSec(1);
 			System.out.println("----------------");
-			 getCores().imprime(); // <-------------------------------------
+			if (getLog()) {
+				getCores().imprime(); // <-------------------------------------
+			}
 			// tem novo proceço?
 			// getCores().removeTempoExec(1);
 
@@ -337,41 +369,37 @@ public class Desenhos extends JPanel {
 			No temp = new No();
 			No pri_temp = null;
 			int priori = 0;
+			int id_limpar;
 
 			if (!getAtivaRoundRobin()) {
 				temp = getCores().getHead();
-				No oco = new No();
-				while (temp != null && temp.getNext() != null) {
-
+				No novo;
+				
+				while (temp != null) {
+					
 					if(temp.getTempExec() <= 0 || temp.getRelogio() >= temp.getDeadLineTotal() +1) {
-						oco.setTamanhoOrig(temp.getTamanhoOrig());
 						if (getPriori0().getHead() != null) {
-							try {
-								getMemoria().buscaID(getPriori0().getHead().getID()).Recebe(oco);;
-							} catch (Exception e) {
-								// TODO: handle exception
-							}
-							iniciaGerencMemoria(temp, getPriori0().getHead().Entrega());
+							novo = getPriori0().getHead().Entrega();
+							novo.setCor(1);
+								MemDesaloca2(temp);
+							temp.Recebe(novo);
 						} else {
-							MemoriaDesaloca(temp);
+								MemDesaloca2(temp);
+							temp.Recebe(new No());
+							temp.setTempExec(0);
+							temp.setTamanhoUsado(0);
 						}
-						temp.setRelogio(0); 
+						temp.setRelogio(0);
 						getPriori0().pop_ini();
 					}
-					temp = temp.getNext();
-				}
-
-
-				if(temp.getTempExec() <= 0 || temp.getRelogio() >= temp.getDeadLineTotal()    +1) {
-					if (getPriori0().getHead() != null) {
-						iniciaGerencMemoria(temp, getPriori0().getHead().Entrega());
+					
+					if (temp.getNext() != null) {
+						temp = temp.getNext();
 					} else {
-						MemoriaDesaloca(temp);
+						break;
 					}
-					temp.setRelogio(0);
-					getPriori0().pop_ini();
 				}
-			} else {
+			} else if(false) {
 
 				temp = getCores().getHead();
 				Lista temp2 = null;
@@ -405,34 +433,6 @@ public class Desenhos extends JPanel {
 					}
 
 					temp = temp.getNext();
-
-				}
-
-				// priori = (getTipo() == 2)? temp.getPriori() : 0;
-				// pri = getPrioridade(priori);
-
-				if( temp.getTempExec() <= 0 ) {
-					System.out.println("-->-" + priori);
-					// if (pri != null && pri.getHead() != null) {
-						// temp.Recebe(pri.getHead().Entrega());
-					// } else {
-						for (int i = 0; i < 4; i++) {
-							temp2 = getPrioridade(i);
-							if(temp2.getHead() != null) {
-								break;
-							}
-						}
-						if(temp2 != null && temp2.getHead() != null) {
-							temp.Recebe(temp2.getHead().Entrega());
-							temp2.pop_ini();
-						} else {
-							temp.Recebe(new No());
-							temp.setTempExec(0);
-						}
-					// }
-					// if(pri != null) {
-						// pri.pop_ini();
-					// }
 				}
 			}
 
@@ -440,35 +440,6 @@ public class Desenhos extends JPanel {
 			priori = 0;
 			No aux = new No();
 			pri_temp = null;
-
-			//aBORTADOS
-			/*
-			if(temp.getTempExec() <= 0 || (temp.getRelogio() >= getCores().getDeadline() +1 && getAtivaDeadLine()) ) {
-				aux = getCores().getHead().Entrega();
-				aux.setTempExec(aux.getQuantum());;
-				priori = (getTipo() == 2)? temp.getPriori() : 0;
-				pri_temp = (getPrioridade(priori)
-								.getHead()
-									!= null) ?
-											getPrioridade(priori).
-												getHead() :
-													null;
-
-				if (pri_temp != null) {
-
-					temp.Recebe(pri_temp.Entrega());
-				} else {
-					temp.Recebe(new No());
-					temp.setTempExec(0);
-				}
-				temp.setRelogio(0);
-				// if (aux.getTempExec() <= 0) {
-					if(aux != getAbortados().getTail()) {
-						getAbortados().push_fim_no(aux);
-					}
-				// }
-			}
-			*/
 
 
 			while(getCores().returnPos(getNumCores()) != null) {
@@ -484,31 +455,27 @@ public class Desenhos extends JPanel {
 				auto_increment = list.populaLista(1, (getTipo() == 2) ? true : false, auto_increment+1);
 
 				No temp = list.getHead();
-				int priori = (getTipo() == 2)? temp.getPriori() : 0;
-
-
-				if ((getTipo() == 2) ? true : false) {
-					getPrioridade(priori).push_fim_no(temp.Entrega());
-				} else {
-					getPriori0().push_fim_no(temp.Entrega());
-				}
-				if(getTipo() == 3) {
-					getPriori0().quickSort2();
+				temp.setCor(1); //-------------------------------------
+				System.out.println(" ---------> ID"+temp.getID() + "tam:"+temp.getTamanhoOrig());
+				if (temp.getTamanhoOrig() <= getTamanhoDeselocado()) {
+					int priori = (getTipo() == 2)? temp.getPriori() : 0;
+					
+					
+					if ((getTipo() == 2) ? true : false) {
+						getPrioridade(priori).push_fim_no(temp.Entrega());
+					} else {
+						getPriori0().push_fim_no(temp.Entrega());
+					}
+					if(getTipo() == 3) {
+						getPriori0().quickSort2();
+					}
 				}
 			}
 		});
 	}
-	private void verificaExistencia() {
-		No temp = new No();
-		temp = getMemoria().getHead();
-		int id = 0;
-		while (temp != null && temp.getNext() != null) {
-			id = temp.getID();
-			if(getCores().buscaID(id) == null)
-				MemoriaDesaloca(temp);
-		}
-	}
 	private void iniciaCores(boolean Prioris) {
+		if (getLog())
+			System.out.println("Inicia 'iniciaCores()' .");
 		// TODO Auto-generated method stub
 		if(!getIniciou()) {
 
@@ -525,7 +492,6 @@ public class Desenhos extends JPanel {
 				}
 				temp = pri.pop_ini();
 				getCores().push_fim(temp);
-				getMemoria().push_fim(temp);;
 			// getPriori0().quickSort();
 			}
 
@@ -537,7 +503,9 @@ public class Desenhos extends JPanel {
 			this.add(getBtnAdicionar());
 		}
 
-		getCores().imprime();
+		if (getLog()){
+			getCores().imprime();
+		}
 	}
 
 
@@ -551,6 +519,8 @@ public class Desenhos extends JPanel {
 
 	@SuppressWarnings("unused")
 	public void paintComponent(Graphics g) {
+		if (getLog())
+			System.out.println("Inicia 'paintComponent()' .");
 		super.paintComponent(g);
 		this.setBackground(Color.WHITE);
 
@@ -641,7 +611,7 @@ public class Desenhos extends JPanel {
 		// Memoria
 		listTemp = getMemoria();
 		posTemp = posY_Priori3 + dist_y*2 + 60;
-		text = "Memoria Total " + listTemp.getTamanho() + "/Desalocado= " + (listTemp.getDesalocado());
+		text = "Memoria Total " + getTamanhoTotal() + "/Desalocado= " + getTamanhoDeselocado();
 
 		// Caixa Mem
 		Graphics2D g2 = (Graphics2D) g;
@@ -654,7 +624,11 @@ public class Desenhos extends JPanel {
 		desenhaListaMem(g, listTemp, text, posTemp, true, getTipo());
 
 
-
+//		getMemoriaLG().imprime();
+		
+		
+		
+		
 
 		// g.setColor(Color.BLUE);;
 		// g.fillRect(25, 425, getLargNo(), getAlturaNo());
@@ -666,8 +640,262 @@ public class Desenhos extends JPanel {
 		// g.drawString("Algum texto.", 25, 520);;
 		repaint();
 	}
+	private Lista verificaIgualdade() {
+		// TODO Auto-generated method stub
+		//System.out.println("in");
+		Lista[] novosProcs = getCores().inexistentesEm(getMemoria());
+		//System.out.println("out");
+		
+		novosProcs[0] = novosProcs[0];
+		
+		if (novosProcs[0] != null) {
+			System.out.print("Entrando: "); novosProcs[0].imprimeID();
+		}
+		if (novosProcs[1] != null) {
+			System.out.print("Saindo: "); novosProcs[1].imprimeID();
+		}
+		
+		return novosProcs[0];
+	}
+	
+	private void administraMemoria() {
+		if(getTipo_mem() == 1) {
+			//administraMemoriaBF();
+			administraMemoriaBF_new();
+		}
+		
+	}
+	
+	private void administraMemoriaBF_new() {
+		Lista[] novosProcs = getCores().inexistentesEm(getMemoria());
+		
+		if (novosProcs[0] != null) {
+			System.out.print("Entrando na mem: "); novosProcs[0].imprimeID();
+		}
+		if (novosProcs[1] != null) {
+			System.out.print("Saindo da mem: "); novosProcs[1].imprimeID();
+		}
+		
+		
+		//Desalocando
+		if (novosProcs[1] != null) {
+
+			No temp = novosProcs[1].getHead();
+			while(temp!= null) {
+//				MemDesaloca2(temp);
+				
+				if (temp.getNext() != null) {
+					temp = temp.getNext();
+				} else {
+					break;
+				}
+			}
+		}
+		//Alocando
+		if (novosProcs[0] != null) {
+			
+			No temp = novosProcs[0].getHead();
+			while(temp!= null) {
+				MemAloca(temp);
+				
+				if (temp.getNext() != null) {
+					temp = temp.getNext();
+				} else {
+					break;
+				}
+			}
+		}
+		
+	}
+	
+	
+	
+	
+	@SuppressWarnings({ "unused", "null" })
+	private void MemDesaloca2(No proc) {
+		No temp = getMemoria().buscaID(proc.getID());
+		System.out.println(" -- "+getTamanhoDeselocado());
+		if (temp != null) {
+			temp.setCor(0);
+			getMemoriaLG().push_fim(proc);
+			getMemoriaLG().getTail().setAponta(proc);
+			setTamanhoDeselocado(getTamanhoDeselocado() + proc.getTamanhoOrig());
+		} else {
+			int id_rem = 7777;
+			temp.setCor(0);
+//			getMemoriaLG().push_ini_no(new No());
+			proc.setID(id_rem);
+//			getMemoriaLG().getHead().Recebe(proc.Entrega());
+//			getMemoriaLG().getHead().setAponta(proc);
+			setTamanhoDeselocado(getTamanhoDeselocado() + proc.getTamanhoOrig());
+		}
+		System.out.println(getTamanhoDeselocado());
+		boolean excluir = true;
+	}
+	private void MemAloca(No Entrando) {
+		
+		// Tamanho fora do permitido
+		if (Entrando.getTamanhoOrig() > getTamanhoDeselocado()) {
+			System.out.println("---- OFM ----");
+		} 
+		// Novo processo tem tamanho diferente de 0.
+		else if(Entrando.getTamanhoOrig() != 0){
+			No bf_ret = null;
+			boolean procura = true;
+			
+			System.out.println("----");
+			getMemoriaLG().imprime();
+			getMemoria().imprime();
+			// Tiver espaço na lista livre
+			if(!getMemoriaLG().isEmpty()) {
+				// procura
+				bf_ret = getMemoriaLG().BuscaBestFit(Entrando.getTamanhoOrig());
+				if (bf_ret != null) {
+					No novo = Entrando.Entrega();
+					novo.setCor(1);
+					
+					No busca = getMemoria().buscaID(bf_ret.getID());
+					if (busca != null) {
+						busca.Recebe(novo.Entrega());
+					} else {
+						getMemoria().push_fim(Entrando.Entrega());
+					}
+					
+					setTamanhoDeselocado(getTamanhoDeselocado() - Entrando.getTamanhoOrig());
+					
+					getMemoriaLG().pop_ID(bf_ret.getID());
+					procura = false;
+				}
+			} 
+			if(procura){
+				No novo = Entrando.Entrega();
+				novo.setCor(1);
+				getMemoria().push_fim(novo);
+				setTamanhoDeselocado(getTamanhoDeselocado() - Entrando.getTamanhoOrig());
+			}
+			getMemoriaLG().imprime();
+			getMemoria().imprime();
+			procura = false;
+		}
+	}
+	private void TesteCorMem() {
+		if (!getMemoria().isEmpty()) {
+			boolean pass = true;
+			
+			
+			
+			No temp = getMemoria().getHead();
+			while (temp != null) {
+
+				if (temp.getCor() == 0) {
+					if(getAbortados().buscaID(temp.getID()) == null) {
+						getAbortados().push_fim(temp.Entrega());
+					} else {
+						pass = false;
+					}
+					
+					if (pass) {
+						setTamanhoDeselocado(getTamanhoDeselocado() + temp.getTamanhoOrig());
+					}
+				}
+				
+				// Passando
+				if (temp.getNext() != null) {
+					temp = temp.getNext();
+				} else {
+					break;
+				}
+			}
+		}
+	}
+	
+	private void MemAloca_old(No temp) {
+		if (temp.getTamanhoOrig() > getTamanhoDeselocado()) {
+			System.out.println("---- OFM ----");
+		} else if(temp.getTamanhoOrig() != 0){
+			if(!getMemoriaLG().isEmpty()) {
+				
+			} else {
+				No novo = temp.Entrega();
+				novo.setCor(1);
+				getMemoria().push_fim(novo);
+				setTamanhoDeselocado(getTamanhoDeselocado() - temp.getTamanhoOrig());
+			}
+		}
+	}
+	private void administraMemoriaBF() {
+		Lista novosProcs = verificaIgualdade();
+		
+		if (novosProcs != null) {
+			
+			No temp = novosProcs.getHead();
+			for (int i = 0; i < novosProcs.getQtdNos(); i++) {
+				if(temp.getTamanhoUsado() > getMemoriaLG().getDesalocado()) {
+					System.out.println("------------------------ OUT OF MEMORY ------------------------");
+				} else if (temp.getTamanhoOrig() != 0 || true){
+					No T = getMemoriaLG().BuscaBestFit(temp.getTamanhoUsado());
+					if (T == null) {
+						System.out.println("------------------------ OUT OF MEMORY ------------------------");
+					} else if(T == getMemoriaLG().getTail()) {
+						T = MemSplit(getMemoriaLG().getTail(), temp);
+						if (T == null) {
+							System.out.println("------------------------ OUT OF MEMORY ------------------------");
+						}
+					} else {
+						T = T;
+					}
+					
+					if (T != null) {
+						temp.setCor(1);
+						No apont = T.getApontando();
+						int temOri = T.getTamanhoOrig();
+						apont.Recebe(temp.Entrega());
+						T.getApontando().setTamanhoOrig(temOri);
+						getMemoriaLG().setDesalocado(getMemoriaLG().getDesalocado() - temOri);
+						getMemoriaLG().pop_ID(T.getID());
+					}
+				}
+				temp = temp.getNext();
+			}
+		}
+		
+	}
+	private No MemSplit(No tail, No novoProc) {
+		// TODO Auto-generated method stub
+		No ret = null;
+		if (novoProc.getTamanhoOrig() > tail.getTamanhoOrig()) {
+			System.out.println("------------------------ OUT OF MEMORY ------------------------");
+			return null;
+		} else {
+			No novo = new No();
+			novo.setID(9999);
+			novo.setTamanhoOrig(novoProc.getTamanhoOrig());
+			getMemoria().push_fim(novo);
+			getMemoriaLG().push_ini_no(novo.Entrega());
+			getMemoriaLG().getHead().setAponta(getMemoria().getTail());
+			int tam = getMemoriaLG().getTamanho() - novoProc.getTamanhoOrig();
+			getMemoriaLG().setTamanho(tam);
+			ret = getMemoriaLG().getHead();
+		}
+		return ret;
+	}
+	private void MemDesaloca(No proc, int id_rem) {
+		// TODO Auto-generated method stub
+		No temp = getMemoria().buscaID(proc.getID());
+		if (temp != null) {
+			temp.setCor(0);
+//			getMemoriaLG().push_ini_no(new No());
+			proc.setID(id_rem);
+//			getMemoriaLG().getHead().Recebe(proc.Entrega());
+//			getMemoriaLG().getHead().setAponta(proc);
+			getMemoria().setDesalocado(getMemoria().getDesalocado() + proc.getTamanhoOrig());
+		}
+	}
+	
 	@SuppressWarnings("unused")
 	private void desenhaLista(Graphics g, Lista listTemp, String text, int posY, boolean cortaFila, int tipo) {
+		if (getLog())
+			System.out.println("Inicia 'desenhaLista()' .");
 		if(listTemp == null || listTemp.isEmpty()) {
 			// System.out.println("desenhaLista: Lista não desenhada, lista vazia."); // <-------------------------------------
 		} else {
@@ -776,247 +1004,61 @@ public class Desenhos extends JPanel {
 		}
 		this.repaint();
 	}
-
-	private void Aloca(Lista listaGen, No procNovo) {
-		// Tem memoria
-		if(listaGen.getTamanho() < procNovo.getTamanhoOrig()) {
-			System.out.println("OUT OF MEMORY");
-		} else if(listaGen.getTamanho() > procNovo.getTamanhoOrig()) {
-			split_Aloca(listaGen, procNovo);
-		} else {
-			No posMem = BuscaBestFit(getMemoriaLG(), procNovo.getTamanhoOrig());
-			procNovo.setCor(1);
-			posMem.getApontando().Recebe(procNovo.Entrega());
-			getMemoriaLG().libera(posMem);
-			getMemoriaLG().setDesalocado(getMemoriaLG().getDesalocado() - procNovo.getTamanhoOrig());
-		}
-	}
-	private void split_Aloca(Lista listaGen, No procNovo) {
-		if(listaGen.getTamanho() < procNovo.getTamanhoOrig()) {
-			System.out.println("OUT OF MEMORY");
-		} else if(listaGen.getTamanho() >= procNovo.getTamanhoOrig()) {
-			int diff = listaGen.getTamanho() - procNovo.getTamanhoOrig();
-			diff = diff < 0 ? diff *(-1) : diff;
-			
-			listaGen.pop_fim();
-			getMemoria().push_fim(procNovo);
-			No temp = getMemoria().getTail();
-
-			listaGen.push_fim(new No());
-			listaGen.getTail().setTamanhoOrig(procNovo.getTamanhoOrig());
-			listaGen.setDesalocado(listaGen.getDesalocado() - procNovo.getTamanhoOrig());
-			listaGen.getTail().setAponta(temp);
-			listaGen.push_fim(new No());
-			listaGen.getTail().setTamanhoOrig(diff);
-		}
-		
-	}
-	private void Dealoca(No ProcessoRem) {
-		No temp = getMemoria().buscaID(ProcessoRem.getID());
-		No libres = getMemoriaLG().getTail();
-		getMemoriaLG().pop_fim();
-		getMemoriaLG().push_fim(new No());
-		getMemoriaLG().setTamanho(ProcessoRem.getTamanhoOrig());
-		getMemoriaLG().getTail().setAponta(temp);
-		getMemoriaLG().push_fim(libres);
-		temp.setCor(1);
-	}
-
-
-	private boolean iniciaGerencMemoria(No algumCore, No novoProcesso) {
-		Funcoes.dump("Entrou em Aloca");
-		boolean ret = false;
-		try {
-			Funcoes.dump("ID que deve ir: "+BuscaBestFit(getMemoria(), novoProcesso.getTamanhoOrig()).getID());
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		ret = MemoriaAlocar(novoProcesso);
-		
-		System.out.println("Entrou");
-
-		ret = true;
-		if(ret) {
-			algumCore.Recebe(novoProcesso);
-
-		} else {
-			algumCore.Recebe(new No());
-			algumCore.setTempExec(0);
-		}
-		return ret;
-	}
-
-
-	@SuppressWarnings("unused")
-	private boolean MemoriaAlocar(No novoProcesso) {
-		
-		
-		if (getMemoria().getDesalocado() > novoProcesso.getTamanhoUsado()) {
-			getMemoria().push_fim_no(novoProcesso.Entrega());
-			this.memUsada = memUsada + novoProcesso.getTamanhoUsado();
-			getMemoria().setDesalocado(getMemoria().getDesalocado() - novoProcesso.getTamanhoUsado());
-		} else {
-			No temp = BuscaBestFit(getMemoria(), novoProcesso.getTamanhoOrig());
-			
-			if(temp == null) {
-				System.out.println("Out of Memory");
-			} else {
-				System.out.println("Encontrado " + 
-						temp.getTamanhoOrig() + " tam nec "+ 
-						novoProcesso.getTamanhoOrig());
-				temp.Recebe(novoProcesso.Entrega());
-				this.memUsada = memUsada + novoProcesso.getTamanhoUsado();
-			}
-		}
-		return true;
-	}
-	@SuppressWarnings("unused")
-	private boolean MemoriaAlocar3(No novoProcesso) {
-		Lista ListGen = getMemoriaLG();
-		Lista Memoria = getMemoria();
-		boolean ret = false;
-		No alocavel = null;
-
-		ListGen.imprimeID(); boolean passa = false;
-		//BestFit
-		if (!getIniciouEstatisticas() && passa) {
-			if(novoProcesso.getTamanhoUsado() < ListGen.getTamanho()) {
-				//Permite alocação
-				//  Aloca posicao na memoria
-				// Memoria.push_fim_no(new No());
-				//  Remove represetanção de espaço sobressalente
-				ListGen.pop_fim();
-				// Adiciona posição na lista de blocos livres.
-				// ListGen.push_fim_no(new No());
-				// Aponta fim ao novo espaço alocado na memoria.
-				// ListGen.getTail().setAponta(Memoria.getTail());
-			}
-		}
-
-		return true;
-	}
-	@SuppressWarnings("unused")
-	private boolean MemoriaAlocar2(No novoProcesso) {
-		Lista ListGen = getMemoriaLG();
-		Lista Memoria = getMemoria();
-		boolean ret = false;
-		No alocavel = null;
-
-		ListGen.imprimeID(); boolean passa = false;
-		//BestFit
-		if (!getIniciouEstatisticas() && passa) {
-			if(novoProcesso.getTamanhoUsado() < ListGen.getTamanho()) {
-				//Permite alocação
-				//  Aloca posicao na memoria
-				Memoria.push_fim_no(new No());
-				//  Remove represetanção de espaço sobressalente
-				ListGen.pop_fim();
-				// Adiciona posição na lista de blocos livres.
-				ListGen.push_fim_no(new No());
-				// Aponta fim ao novo espaço alocado na memoria.
-				ListGen.getTail().setAponta(Memoria.getTail());
-
-				ListGen.setTamanho(ListGen.getTamanho() -novoProcesso.getTamanhoUsado());
-				ListGen.push_fim(new No());
-				ListGen.getTail().setTamanhoUsado(novoProcesso.getTamanhoUsado());
-
-				alocavel = BuscaBestFit(ListGen, novoProcesso.getTamanhoUsado());
-
-			}
-
-			if(alocavel != null){
-				ListGen.imprimeID();
-				alocavel.getApontando().Recebe(novoProcesso.Entrega());
-				ret = true;
-			}
-		}
-		return ret;
-	}
-
-	private No BuscaBestFit(Lista List, int tamanho) {
-		No ret = null;
-
-		if(List.getHead() != List.getTail() && !List.isEmpty()){
-			No temp = List.getHead().getNext(); //Ignora head
-
-			int diff = temp.getTamanhoOrig() - tamanho;
-			diff = diff < 0 ? diff*(-1) : diff;
-
-			// Tamanho exato
-			if(diff == 0) {
-				ret = temp;
-			}
-			// Ignora Tail
-			else if (temp.getNext() != null){
-				ret = BuscaBestFit_recursive(temp.getNext(), tamanho, diff);
-			}
-		}
-
-		return ret;
-	}
-	private No BuscaBestFit_recursive(No temp, int tamRequerido, int diff_ant) {
-		No ret = null;
-		int diff = temp.getTamanhoOrig() - tamRequerido;
-		diff = diff < 0 ? diff*(-1) : diff;
-
-		// TamRequerido exato
-		if(diff == 0) {
-			ret = temp;
-		}
-		// Ignora Tail
-		else if (temp.getNext() != null){
-			ret = BuscaBestFit_recursive(temp.getNext(), tamRequerido, diff);
-		}
-		if(diff_ant < diff){
-			ret = temp;
-		}
-
-		return ret;
-	}
-	@SuppressWarnings("unused")
 	private void desenhaListaMem(Graphics g, Lista listTemp, String text, int posY, boolean cortaFila, int tipo) {
+		if (getLog())
+			System.out.println("Inicia 'desenhaListaMem()' .");
 		// TODO Auto-generated method stub
+		administraMemoria();
 
+		Color cor_letra = Color.RED;
+		cor_letra = Color.BLACK;
+		
+		System.out.println(text);
+		int posTemp = posY;
+		setPulaNo(25);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(Color.BLACK);
+		g2.setFont(new Font("default", Font.BOLD, 16));
+		g2.drawString(text, 10*30, posTemp	 -5);; //
+		g2.setFont(new Font("default", Font.BOLD, 12));
+		
+		if (getLog()) {
+			getMemoriaLG().imprimeMem();
+			getMemoria().imprimeMem();
+		}
 		if(listTemp == null || listTemp.isEmpty()) {
 			System.out.println("desenhaLista: Lista não desenhada, lista vazia.");
 		} else {
 
 			No atu = null;
 
-			Graphics2D g2 = (Graphics2D) g;
-			int posTemp = posY;
-			setPulaNo(25);
-
-			g2.setColor(Color.BLACK);
-			g2.setFont(new Font("default", Font.BOLD, 16));
-			g2.drawString(text, 10*30, posTemp	 -5);; //
-			g2.setFont(new Font("default", Font.BOLD, 12));
-
-
 			No temp = listTemp.getHead();
 			int cont = 1;
 			String sub_texto = "";
 
-			int cor = 1;
 			boolean exibeProcs = true;
 			while (temp != null  && temp.getNext() != null && cont < 7  && exibeProcs) {
 				
-				if(cor == 0)
+				if(temp.getCor() == 0)
 					g2.setColor(new Color(194, 194, 194));
-				else if(cor == 1)
+				else if(temp.getCor() == 1)
 					g2.setColor(new Color(86, 146, 246));;
 				
 				g.fillRect(getPulaNo(), posTemp, getLargNo(), getAlturaNo());
 				g2.setColor(Color.BLACK);
 				g2.draw( new Rectangle2D.Double(getPulaNo(), posTemp, getLargNo(), getAlturaNo()));
 
-				g2.setColor(Color.RED);
+				
+				g2.setColor(cor_letra );
 				if(temp.getTempExecTotal() < 999999) {
 					// Texto
 					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
 					g2.drawString("Tamanho= "+ temp.getTamanhoUsado(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
 					g2.drawString("Tamanho Ori= "+ temp.getTamanhoOrig(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
 					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
+				} else if(temp.getTamanhoUsado() ==0) {
+					// Texto
+					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
 				}
 
 				// Mensagem diferenciada
@@ -1056,22 +1098,25 @@ public class Desenhos extends JPanel {
 
 			// Ultimo no
 			if(temp != null && exibeProcs) {
-				if(cor == 0)
+				if(temp.getCor() == 0)
 					g2.setColor(new Color(194, 194, 194));
-				else if(cor == 1)
+				else if(temp.getCor() == 1)
 					g2.setColor(new Color(86, 146, 246));;
 				
 				g.fillRect(getPulaNo(), posTemp, getLargNo(), getAlturaNo());
 				g2.setColor(Color.BLACK);
 				g2.draw( new Rectangle2D.Double(getPulaNo(), posTemp, getLargNo(), getAlturaNo()));
 
-				g2.setColor(Color.RED);
+				g2.setColor(cor_letra);
 				if(temp.getTempExecTotal() < 999999) {
 					// Texto
 					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
 					g2.drawString("Tamanho= "+ temp.getTamanhoUsado(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 8);
 					g2.drawString("Tamanho Ori= "+ temp.getTamanhoOrig(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 22);
 					g2.drawString("Quantum= "+ temp.getQuantum(), getPulaNo() +4, posTemp + getAlturaNo()/3+ 34);
+				} else if(temp.getTamanhoUsado() ==0) {
+					// Texto
+					g2.drawString("ID= "+ temp.getID(), getPulaNo() +4, posTemp + getAlturaNo()/4);
 				}
 				// Mensagem diferenciada
 				if ((tipo >= 1 || tipo <= 3) && false) {
@@ -1110,22 +1155,6 @@ public class Desenhos extends JPanel {
 		}
 		this.repaint();
 	}
-
-	private void MemoriaDesaloca(No procLiberar) {
-		// TODO Auto-generated method stub
-		int id = procLiberar.getID();
-		
-		Funcoes.dump("Entrou em desaloca");
-		No removivel = getMemoria().buscaID(id);
-		int tam = procLiberar.getTamanhoUsado();
-		No limpo = new No();
-		limpo.setTamanhoUsado(0);
-		if(removivel != null) {
-			removivel.Recebe(limpo.Entrega());
-		}
-		procLiberar.Recebe(limpo.Entrega());
-		procLiberar.setTempExec(0);
-		
-	}
-
+	
+	
 }
