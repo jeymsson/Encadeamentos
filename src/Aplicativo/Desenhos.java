@@ -32,8 +32,14 @@ public class Desenhos extends JPanel {
 	int memUsada = 0;
 	int TamanhoTotal = 0, TamanhoDeselocado = 0;
 	int botaoAdd = 0;
+	int outOfMem = 0;
 	int[] estatisticasTam;
+	int[] estatisticasFinal;
 	int estatisticasQtdVetor, estatisticasCount = 0;
+
+	public int[] getEstatisticasFinal() {
+		return estatisticasFinal;
+	}
 
 	LTG LTG;
 
@@ -430,7 +436,6 @@ public class Desenhos extends JPanel {
 		getMemoriaEst(3).setNomeLista("Memoria Lista Est 4");
 		
 		setEstatisticasQtdVetor(5);
-		setEstatisticasTam(6);
 		
 
 		iniciaCores(false);
@@ -551,7 +556,8 @@ public class Desenhos extends JPanel {
 							
 							No temp = list.getHead();
 							temp.setCor(1); //-------------------------------------
-							temp.setTamanhoUsado(102);
+//							temp.setTamanhoUsado(100);
+//							temp.setTamanhoOrig(100);
 							System.out.println(" ---------> ID"+temp.getID() + "tam:"+temp.getTamanhoOrig());
 							if (temp.getTamanhoOrig() <= getTamanhoDeselocado()) {
 								int priori = (getTipo() == 2)? temp.getPriori() : 0;
@@ -713,6 +719,7 @@ public class Desenhos extends JPanel {
 		listTemp = getMemoria();
 		posTemp = posY_Priori3 + dist_y*2 + 60;
 		text = "Memoria Total " + getTamanhoTotal() + "/Desalocado= " + getTamanhoDeselocado();
+		text = "Memoria Total " + getTamanhoTotal();
 
 		// Caixa Mem
 		Graphics2D g2 = (Graphics2D) g;
@@ -859,20 +866,31 @@ public class Desenhos extends JPanel {
 		// Tamanho fora do permitido
 		if (Entrando.getTamanhoOrig() > getTamanhoDeselocado()) {
 			System.out.println("---- OFM ----");
+			this.outOfMem++;
+			Thread threadOFM = new Thread(){
+				public void run(){
+					JOptionPane.showMessageDialog(null, "OUT OF MEMORY.");
+					outOfMem = 0;
+				}
+			};
+			threadOFM.start();
 		} 
 		// Novo processo tem tamanho diferente de 0.
 		else if(Entrando.getTamanhoOrig() != 0){
+			
+			// Refaz listas genericas
 			if(getTipo_mem() == 2 && getIniciouEstatisticas() && getFiltraListaEstatisticas()) {
 				// Re-analiza apena uma vez.
 				setFiltraListaEstatisticas(false);
 				int[] populares = Funcoes.mostPopular(getEstatisticasTam());
+				this.estatisticasFinal = populares;
 				int cont = 0;
 				No temp;
 				for (int i : populares) {
 					if (!getMemoriaLG().isEmpty()) {
 						temp = getMemoriaLG().getHead();
 						if (temp != null) {
-							if (temp.getTamanhoUsado() == i) {
+							if (temp.getTamanhoOrig() == i) {
 								getMemoriaEst(cont).push_fim(temp.Entrega());
 								getMemoriaLG().pop_ID(temp.getID());
 							}
@@ -888,7 +906,7 @@ public class Desenhos extends JPanel {
 				}
 				
 				for (int i = 0; i < 4; i++) {
-					getMemoriaEst(cont).imprime();
+					getMemoriaEst(i).imprime();
 				}
 				getMemoriaLG().imprime();
 				boolean ret = false;
@@ -896,11 +914,15 @@ public class Desenhos extends JPanel {
 			
 			
 			
+			// Começa alocação
 			
 			No bf_ret = null;
 			boolean procura = true;
 			
 			System.out.println("----");
+			for (int i = 0; i < 4; i++) {
+				getMemoriaEst(i).imprime();
+			}
 			getMemoriaLG().imprime();
 			getMemoria().imprime();
 			// Tiver espaço na lista livre
@@ -1021,14 +1043,38 @@ public class Desenhos extends JPanel {
 			for (int i = 0; i < novosProcs.getQtdNos(); i++) {
 				if(temp.getTamanhoUsado() > getMemoriaLG().getDesalocado()) {
 					System.out.println("------------------------ OUT OF MEMORY ------------------------");
+					this.outOfMem++;
+					Thread threadOFM = new Thread(){
+						public void run(){
+							JOptionPane.showMessageDialog(null, "OUT OF MEMORY.");
+							outOfMem = 0;
+						}
+					};
+					threadOFM.start();
 				} else if (temp.getTamanhoOrig() != 0 || true){
 					No T = getMemoriaLG().BuscaBestFit(temp.getTamanhoUsado());
 					if (T == null) {
 						System.out.println("------------------------ OUT OF MEMORY ------------------------");
+						this.outOfMem++;
+						Thread threadOFM = new Thread(){
+							public void run(){
+								JOptionPane.showMessageDialog(null, "OUT OF MEMORY.");
+								outOfMem = 0;
+							}
+						};
+						threadOFM.start();
 					} else if(T == getMemoriaLG().getTail()) {
 						T = MemSplit(getMemoriaLG().getTail(), temp);
 						if (T == null) {
 							System.out.println("------------------------ OUT OF MEMORY ------------------------");
+							this.outOfMem++;
+							Thread threadOFM = new Thread(){
+								public void run(){
+									JOptionPane.showMessageDialog(null, "OUT OF MEMORY.");
+									outOfMem = 0;
+								}
+							};
+							threadOFM.start();
 						}
 					} else {
 //						T = T;
@@ -1053,6 +1099,14 @@ public class Desenhos extends JPanel {
 		No ret = null;
 		if (novoProc.getTamanhoOrig() > tail.getTamanhoOrig()) {
 			System.out.println("------------------------ OUT OF MEMORY ------------------------");
+			this.outOfMem++;
+			Thread threadOFM = new Thread(){
+				public void run(){
+					JOptionPane.showMessageDialog(null, "OUT OF MEMORY.");
+					outOfMem = 0;
+				}
+			};
+			threadOFM.start();
 			return null;
 		} else {
 			No novo = new No();
@@ -1209,6 +1263,14 @@ public class Desenhos extends JPanel {
 		g2.setColor(Color.BLACK);
 		g2.setFont(new Font("default", Font.BOLD, 16));
 		g2.drawString(text, 10*30, posTemp	 -5);; //
+		
+		if(getIniciouEstatisticas() && getEstatisticasFinal() != null) {
+			String estatisticas ="Estatisticas:";
+			for (int i : getEstatisticasFinal()) {
+				estatisticas = estatisticas + " / " + i;
+			}
+			g2.drawString(estatisticas, 10*30, posTemp	 -20);; //
+		}
 		g2.setFont(new Font("default", Font.BOLD, 12));
 		
 		if (getLog()) {
@@ -1226,7 +1288,7 @@ public class Desenhos extends JPanel {
 			String sub_texto = "";
 
 			boolean exibeProcs = true;
-			while (temp != null  && cont < 7  && exibeProcs) {
+			while (temp != null  && cont < 8  && exibeProcs) {
 				
 				if(temp.getCor() == 0) // Cinza
 					g2.setColor(new Color(194, 194, 194));

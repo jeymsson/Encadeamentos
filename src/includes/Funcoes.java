@@ -1,5 +1,7 @@
 package includes;
 
+import java.util.Arrays;
+
 import javax.swing.JOptionPane;
 
 import encadeamento.RR;
@@ -118,26 +120,15 @@ public class Funcoes {
 	}
 	
    public static void main(String[] args) {
-		
-		Lista l = new Lista();
-		
-		
-//		Lista r = new Lista();
-//		l.setAtivaLogs(true);
-//		
-		l.push_fim(10, 0, 0);
-		l.push_fim(20, 0, 1);
-		l.push_fim(30, 0, 3);
-		System.out.println(l.temNoTempoZerado().getTempExecTotal());
-		
-		
-//		r.push_fim(40, 2);
-//		r.push_fim(50, 1);
-//		
-//		l.imprime();
-//		repassaFila(l, r, 0);
-//		System.out.println("----");
-//		l.imprime();
+	   int[] values = {1,2,2,3,3,5,5,5,7,7,7,7};
+		int[] ignorar = {5, 7};
+//		System.out.println(mostPopular(values));
+//		System.out.println(mostPopular(values, 7));
+//		System.out.println(mostPopular(values, ignorar));
+		int ret[] = mostPopular(values);
+		for (int i : ret) {
+			System.out.println(i);
+		}
 		
 	}
    public static int[] mostPopular(int[] populares) {
@@ -145,6 +136,7 @@ public class Funcoes {
 		for (int i = 0; i < 4; i++) {
 			ret[i] = mostPopularr(populares, ret);
 		}
+//		Arrays.sort(ret);
 		return ret;
 	}
 	private static int mostPopularr(int[] a, int[] ignorar){
@@ -171,6 +163,55 @@ public class Funcoes {
 						count = tempCount;
 					}
 				}
+			}
+		}
+		return popular;
+	}
+	private static int mostPopularr(int[] a, int ignorar){
+		int count = 1, tempCount;
+		int popular = a[0];
+		int temp = 0;
+		
+		int len = 1; boolean passa = true;
+		for (int i = 0; i < (a.length - 1); i++)
+		{
+			temp = a[i];
+			for (int k = 0; k < len; k++) {
+				passa = ignorar == temp;
+				if(!passa) {
+					tempCount = 0;
+					for (int j = 1; j < a.length; j++)
+					{
+						if (temp == a[j])
+							tempCount++;
+					}
+					if (tempCount > count)
+					{
+						popular = temp;
+						count = tempCount;
+					}
+				}
+			}
+		}
+		return popular;
+	}
+	private static int mostPopularr(int[] a){
+		int count = 1, tempCount;
+		int popular = a[0];
+		int temp = 0;
+		for (int i = 0; i < (a.length - 1); i++)
+		{
+			temp = a[i];
+			tempCount = 0;
+			for (int j = 1; j < a.length; j++)
+			{
+				if (temp == a[j])
+					tempCount++;
+			}
+			if (tempCount > count)
+			{
+				popular = temp;
+				count = tempCount;
 			}
 		}
 		return popular;
