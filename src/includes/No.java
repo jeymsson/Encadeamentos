@@ -7,9 +7,9 @@ public class No {
 	private No Back, Next;
 	private int tempExecTotal, tempExec, Priori, _ID, Relogio, DeadLineTotal, contadorIrrisorio, Quantum;
 	private int Estado; // 1- pronto, 2- Esperando, 3- Executando, 4-Removido;
-	private int Cor = 0; // 0- cinza, 1- azul;
+	private int _Cor = 0; // 0- cinza, 1- azul;
 	private int DadoComplementar = -1; // 1- pronto, 2- Esperando, 3- Executando;
-	private int tamanhoUsado = 0, tamanhoOrig = 0;
+	private int _tamanhoUsado = 0, _tamanhoOrig = 0;
 	private No apontando = null;
 
 	public int getTempExec() {
@@ -76,10 +76,10 @@ public class No {
 		Relogio = relogio;
 	}
 	public int getCor() {
-		return Cor;
+		return _Cor;
 	}
 	public void setCor(int cor) {
-		Cor = cor;
+		_Cor = cor;
 	}
 	public int getContadorIrrisorio() {
 		return contadorIrrisorio;
@@ -88,18 +88,18 @@ public class No {
 		this.contadorIrrisorio = contadorIrrisorio;
 	}
 	public int getTamanhoUsado() {
-		return tamanhoUsado;
+		return _tamanhoUsado;
 	}
 	public void setTamanhoUsado(int tamanho) {
-		this.tamanhoUsado = tamanho;
+		this._tamanhoUsado = tamanho;
 		if(getTamanhoOrig() == 0)
 			setTamanhoOrig(tamanho);
 	}
 	public int getTamanhoOrig() {
-		return tamanhoOrig;
+		return _tamanhoOrig;
 	}
 	public void setTamanhoOrig(int tamanhoOrig) {
-		this.tamanhoOrig = tamanhoOrig;
+		this._tamanhoOrig = tamanhoOrig;
 	}
 	public int generateID() {
 		Random random = new Random();
@@ -123,8 +123,8 @@ public class No {
 	public int generateTamanho() {
 		Random random = new Random();
 		int valor = random.nextInt(1057);
-		this.tamanhoUsado = valor;
-		return this.tamanhoUsado;
+		this._tamanhoUsado = valor;
+		return this._tamanhoUsado;
 	}
 
 

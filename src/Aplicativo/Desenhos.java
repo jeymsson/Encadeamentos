@@ -772,9 +772,168 @@ public class Desenhos extends JPanel {
 		} else if(getTipo_mem() == 2) {
 			//administraMemoriaBF();
 			administraMemoriaBF_new();
+		} else if(getTipo_mem() == 3) {
+			//administraMemoriaBF();
+			verificaVazio();
+			administraMemoriaBF_new();
 		}
 		
 	}
+	
+	@SuppressWarnings("unused")
+	private void verificaVazio() {
+		// TODO Auto-generated method stub
+		No Temp = getMemoriaLG().getHead()
+				, tmpMem = null;
+		
+		MemJoin();
+		
+	}
+	private Lista adjacentesApontados(No livres) {
+		Lista adjs = null;
+		if (livres != null) {
+			if (livres.getApontando() != null) {
+				adjs = new Lista();
+				adj(livres.getApontando(), adjs);
+			}
+		}
+		return (adjs.getQtdNos()> 1 ? adjs : null);
+	}
+	private void adj(No apontando, Lista l) {
+		if(apontando != null) {
+			l.push_fim(apontando.Entrega());
+			if(apontando.getBack() != null) {
+				if(apontando.getBack().getCor() == 0) {
+					adj(apontando, l);
+					apontando = apontando.getNext();
+				}
+			}
+			if(apontando.getNext() != null) {
+				if(apontando.getNext().getCor() == 0) {
+					adj(apontando, l);
+				}
+			}
+		}
+	}
+	public void iterativePreorder(No node, Lista ret) {
+		if (node != null) {
+			if (node.getBack() != null) {
+				if(node.getBack().getCor() == 0) {
+					iterativePreorder(node.getBack(), ret);
+				}
+			}
+			ret.push_fim(node);
+			if (node.getNext() != null) {
+				if(node.getNext().getCor() == 0){
+					iterativePreorder(node.getNext(), ret);
+				}
+			}
+		}
+//		return ret;
+	}
+	
+	public Lista adjts(No livre) {
+		Lista l = new Lista();
+		if(livre!= null) {
+			if (livre.getCor() == 0) {
+				
+				boolean esq = true, continua = true;
+				if (continua) {
+					if (livre.getBack() != null && esq) {
+						if(livre.getBack().getCor() == 0) {
+							livre = livre.getBack();
+						} else {
+							
+						}
+					} else {
+						esq = !esq;
+					}
+					
+					if(!esq) {
+						l.push_fim(livre.Entrega());
+						if (livre.getNext() != null && !esq) 
+						{
+							if(livre.getNext().getCor() == 0) {
+								livre = livre.getNext();
+							} else {
+								
+							}
+						} else {
+							continua = !continua;
+						}
+					}
+					
+					
+				}
+				
+			}
+		}
+		return l;
+	}
+	public void MemJoin() {
+		if(!getMemoriaLG().isEmpty()) {
+			
+			
+			No temp = getMemoria().buscaCor(0);
+			No tempAnt = null;
+			int id = temp.getID();
+			No novo = new No();
+			int tamNovo = 0;
+			int cont = 0, qtd = 0;
+			System.out.print("Removendo ");
+			while(temp != null && temp.getCor() == 0) {
+				if (cont != 0) {
+					tamNovo = tamNovo + tempAnt.getTamanhoOrig();
+					novo.Recebe(temp.Entrega());
+					getMemoria().pop_ID(tempAnt.getID());
+					getMemoriaLG().pop_ID(tempAnt.getID());
+					System.out.print(", " + tempAnt.getID());
+					tempAnt = novo;
+					qtd++;
+				} else {
+					tempAnt = temp;
+				}
+				
+				if (temp.getNext() != null) {
+					temp = temp.getNext();
+				} else {
+					break;
+				}
+				cont++;
+			}
+			System.out.println();
+			
+			if (tempAnt.getCor() == 0 && qtd >1) {
+				
+				temp = getMemoria().buscaID(tempAnt.getID());
+				if (temp != null) {
+					tamNovo = tamNovo + tempAnt.getTamanhoOrig();
+					
+					getMemoria().imprimeID();;
+					getMemoriaLG().imprimeID();;
+					No tempLg = getMemoriaLG().buscaID(tempAnt.getID());
+					tempAnt.setID(id);
+					
+					temp.Recebe(tempAnt.Entrega());
+					
+					temp.setTamanhoUsado(tamNovo);
+					temp.setTamanhoOrig(tamNovo);
+					
+					tempLg.setTamanhoUsado(tamNovo);
+					tempLg.setTamanhoOrig(tamNovo);
+					
+					tempLg.Recebe(tempAnt.Entrega());
+					tempLg.setAponta(tempLg);
+				}
+			}
+			
+			
+			
+			
+			
+		}
+	}
+	
 	
 	private void administraMemoriaBF_new() {
 		Lista[] novosProcs = getCores().inexistentesEm(getMemoria());

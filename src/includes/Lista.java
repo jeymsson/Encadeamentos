@@ -124,6 +124,7 @@ public class Lista {
 		if (isEmpty()) {
 			System.out.println("imprime: Lista Vazia");
 		} else {
+			System.out.println(getNomeLista());
 			No temp = getHead();
 			while (temp.getNext() != null) {
 				System.out.print("ID.: '" + temp.getID());
@@ -1246,4 +1247,20 @@ public class Lista {
 		return ret;
 	}
 
+	public No buscaCor(int cor) {
+		No ret = null;
+		if (!isEmpty()) {
+			No temp = getHead();
+			while (temp.getNext() != null) {
+				if(temp.getCor() == cor) {
+					break;
+				}
+				temp = temp.getNext();
+			}
+			if(temp.getCor() == cor) {
+				ret = temp;
+			}
+		}
+		return ret;
+	}
 }
