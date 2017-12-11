@@ -502,19 +502,30 @@ public class Lista {
 			push_fim(8);
 			getTail().setID(auto_increment++);
 			getTail().setTamanhoUsado(200);
-			push_fim(10);
+			push_fim(8);
 			getTail().setID(auto_increment++);
 			getTail().setTamanhoUsado(300);
-			push_fim(12);
+			push_fim(8);
 			getTail().setID(auto_increment++);
 			getTail().setTamanhoUsado(400);
-//			push_fim(14);
-//			getTail().setID(auto_increment++);
-//			getTail().setTamanhoUsado(500);
-//			getTail().setTamanhoUsado(400);
-			push_fim(16);
+			push_fim(8);
 			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(50);
+			getTail().setTamanhoUsado(500);
+			push_fim(8);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(500);
+			push_fim(8);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(500);
+			push_fim(8);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(500);
+			push_fim(8);
+			getTail().setID(auto_increment++);
+			getTail().setTamanhoUsado(500);
+			//push_fim(16);
+			//getTail().setID(auto_increment++);
+			//getTail().setTamanhoUsado(50);
 			
 //			push_fim(12);
 //			push_fim(12);
@@ -819,13 +830,15 @@ public class Lista {
 	}
 
 	public void adicionaRelogio(int i) {
-		No temp = getHead();
-		while (temp.getNext() != null) {
+		if(!isEmpty()) {
+			No temp = getHead();
+			while (temp.getNext() != null) {
+				temp.setRelogio(temp.getRelogio() +i);
+				
+				temp = temp.getNext();
+			}
 			temp.setRelogio(temp.getRelogio() +i);
-
-			temp = temp.getNext();
 		}
-		temp.setRelogio(temp.getRelogio() +i);
 	}
 
 	public Lista BubbleSort(Lista l) {

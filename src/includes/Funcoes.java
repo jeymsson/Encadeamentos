@@ -140,6 +140,52 @@ public class Funcoes {
 //		l.imprime();
 		
 	}
+   public static int[] mostPopular(int[] populares) {
+		int[] ret = new int[4];
+		for (int i = 0; i < 4; i++) {
+			ret[i] = mostPopularr(populares, ret);
+		}
+		return ret;
+	}
+	private static int mostPopularr(int[] a, int[] ignorar){
+		int count = 1, tempCount;
+		int popular = a[0];
+		int temp = 0;
+		
+		int len = ignorar.length; boolean passa = true;
+		for (int i = 0; i < (a.length - 1); i++)
+		{
+			temp = a[i];
+			for (int k = 0; k < len; k++) {
+				passa = existeEm(ignorar, temp);
+				if(!passa) {
+					tempCount = 0;
+					for (int j = 1; j < a.length; j++)
+					{
+						if (temp == a[j])
+							tempCount++;
+					}
+					if (tempCount > count)
+					{
+						popular = temp;
+						count = tempCount;
+					}
+				}
+			}
+		}
+		return popular;
+	}
+	private static boolean existeEm(int[] array, int valor) {
+		boolean ret = false;
+		for (int i : array) {
+			if (i == valor) {
+				return true;
+			}
+		}
+		return ret;
+	}
+	
+   
     // dump() - 3 funcoes genericas
 	public static <G> int dump(G[] valor){
 		int ret = 0;

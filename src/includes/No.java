@@ -218,6 +218,7 @@ public class No {
 		setRelogio(node.getRelogio());
 		setDeadLineTotal(node.getDeadLineTotal());
 		setTamanhoUsado(node.getTamanhoUsado());
+		setAponta(node.getApontando());
 		setCor(node.getCor());
 	}
 	public No Entrega() {
@@ -235,6 +236,7 @@ public class No {
 		node.setRelogio(getRelogio());
 		node.setDeadLineTotal(getDeadLineTotal());
 		node.setTamanhoUsado(getTamanhoUsado());
+		node.setAponta(getApontando());
 		node.setCor(getCor());
 		return node;
 	}

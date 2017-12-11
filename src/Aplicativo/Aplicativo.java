@@ -298,6 +298,7 @@ public class Aplicativo {
 										+ ", Shortest Job First");
 							}
 							
+							@SuppressWarnings("static-access")
 							Desenhos desenho = new Desenhos(1, Cores, Processos, escl_Mem, false, f.string2int(txtMemoria));
 							frame.getContentPane().add(desenho);
 							frame.setSize(800, 600);
