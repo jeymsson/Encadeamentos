@@ -5,7 +5,8 @@ import java.util.Random;
 public class No {
 
 	private No Back, Next;
-	private int tempExecTotal, tempExec, Priori, _ID, Relogio, DeadLineTotal, contadorIrrisorio, Quantum;
+	private int tempExecTotal, tempExec, Priori, Relogio, DeadLineTotal, contadorIrrisorio, Quantum;
+	private double _ID; // 1- pronto, 2- Esperando, 3- Executando, 4-Removido;
 	private int Estado; // 1- pronto, 2- Esperando, 3- Executando, 4-Removido;
 	private int _Cor = 0; // 0- cinza, 1- azul;
 	private int DadoComplementar = -1; // 1- pronto, 2- Esperando, 3- Executando;
@@ -63,10 +64,10 @@ public class No {
 	public void setEstado(int estado) {
 		Estado = estado;
 	}
-	public int getID() {
+	public double getID() {
 		return _ID;
 	}
-	public void setID(int iD) {
+	public void setID(double iD) {
 		_ID = iD;
 	}
 	public int getRelogio() {
@@ -101,7 +102,7 @@ public class No {
 	public void setTamanhoOrig(int tamanhoOrig) {
 		this._tamanhoOrig = tamanhoOrig;
 	}
-	public int generateID() {
+	public double generateID() {
 		Random random = new Random();
 		int valor = random.nextInt(1001);
 		this._ID = valor;

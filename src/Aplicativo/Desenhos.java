@@ -29,6 +29,7 @@ public class Desenhos extends JPanel {
 	private boolean iniciouEstatisticas = false, filtraListaEstatisticas = true;
 	JButton btnAdicionar;
 	int auto_increment = 0;
+	double auto_increment_dec = 0, controle_dec = 0.0001;
 	int memUsada = 0;
 	int TamanhoTotal = 0, TamanhoDeselocado = 0;
 	int botaoAdd = 0;
@@ -36,6 +37,8 @@ public class Desenhos extends JPanel {
 	int[] estatisticasTam;
 	int[] estatisticasFinal;
 	int estatisticasQtdVetor, estatisticasCount = 0;
+	int reset = 0;
+	
 
 	public int[] getEstatisticasFinal() {
 		return estatisticasFinal;
@@ -138,6 +141,15 @@ public class Desenhos extends JPanel {
 	public void setEstatisticasQtdVetor(int estatisticasQtdVetor) {
 		this.estatisticasQtdVetor = estatisticasQtdVetor;
 		this.estatisticasTam = new int[getEstatisticasQtdVetor()];
+	}
+	public double getAuto_increment_dec() {
+		return auto_increment_dec;
+	}
+	public void setAuto_increment_dec() {
+		this.auto_increment_dec = getAuto_increment_dec()+getControle_dec();
+	}
+	public double getControle_dec() {
+		return controle_dec;
 	}
 	public int getTipo() {
 		return tipo;
@@ -549,15 +561,15 @@ public class Desenhos extends JPanel {
 				if (getBotaoAdd() == 1) {
 					Thread thread = new Thread(){
 						public void run(){
-							JOptionPane.showMessageDialog(null, "Adicionando Processos, para cancelar clique no 'X' para parar.");
+//							JOptionPane.showMessageDialog(null, "Adicionando Processos, para cancelar clique no 'X' para parar.");
 							
 							Lista list = new Lista();
 							auto_increment = list.populaLista(1, (getTipo() == 2) ? true : false, auto_increment+1);
 							
 							No temp = list.getHead();
 							temp.setCor(1); //-------------------------------------
-//							temp.setTamanhoUsado(100);
-//							temp.setTamanhoOrig(100);
+							temp.setTamanhoUsado(100);
+							temp.setTamanhoOrig(100);
 							System.out.println(" ---------> ID"+temp.getID() + "tam:"+temp.getTamanhoOrig());
 							if (temp.getTamanhoOrig() <= getTamanhoDeselocado()) {
 								int priori = (getTipo() == 2)? temp.getPriori() : 0;
@@ -876,7 +888,7 @@ public class Desenhos extends JPanel {
 			
 			No temp = getMemoria().buscaCor(0);
 			No tempAnt = null;
-			int id = temp.getID();
+			double id = temp.getID();
 			No novo = new No();
 			int tamNovo = 0;
 			int cont = 0, qtd = 0;
@@ -908,6 +920,7 @@ public class Desenhos extends JPanel {
 				temp = getMemoria().buscaID(tempAnt.getID());
 				if (temp != null) {
 					tamNovo = tamNovo + tempAnt.getTamanhoOrig();
+					int tam = getMemoriaLG().getTamanho() + tempAnt.getTamanhoOrig();
 					
 					getMemoria().imprimeID();;
 					getMemoriaLG().imprimeID();;
@@ -916,14 +929,26 @@ public class Desenhos extends JPanel {
 					
 					temp.Recebe(tempAnt.Entrega());
 					
-					temp.setTamanhoUsado(tamNovo);
-					temp.setTamanhoOrig(tamNovo);
+					temp.setTamanhoUsado(tam);
+					temp.setTamanhoOrig(tam);
 					
-					tempLg.setTamanhoUsado(tamNovo);
-					tempLg.setTamanhoOrig(tamNovo);
+					tempLg.setTamanhoUsado(tam);
+					tempLg.setTamanhoOrig(tam);
 					
 					tempLg.Recebe(tempAnt.Entrega());
 					tempLg.setAponta(tempLg);
+				}
+			} else {
+				temp = getMemoria().getTail();
+				No temp_Lg = getMemoriaLG().buscaID(temp.getID());
+				if (reset == 200) {
+					temp.setTamanhoOrig(getTamanhoTotal());
+					temp.setTamanhoUsado(getTamanhoTotal());
+					temp_Lg.setTamanhoOrig(getTamanhoTotal());
+					temp_Lg.setTamanhoUsado(getTamanhoTotal());
+					reset = 0;
+				} else {
+					reset++;
 				}
 			}
 			
@@ -1091,6 +1116,13 @@ public class Desenhos extends JPanel {
 					if(!getMemoriaEst(i).isEmpty() && procura) {
 						// procura
 						bf_ret = getMemoriaEst(i).BuscaBestFit(Entrando.getTamanhoOrig());
+		 				if (getTipo_mem() == 3) {
+							if (bf_ret != null) {
+								if (bf_ret.getTamanhoOrig()!= Entrando.getTamanhoOrig()) {
+									MemSplit(bf_ret, Entrando);
+								}
+							}
+						}
 						if (bf_ret != null) {
 							No novo = Entrando.Entrega();
 							novo.setCor(i+2);
@@ -1113,7 +1145,14 @@ public class Desenhos extends JPanel {
 			}
 			if(!getMemoriaLG().isEmpty() && procura) {
 				// procura
-				bf_ret = getMemoriaLG().BuscaBestFit(Entrando.getTamanhoOrig());
+ 				bf_ret = getMemoriaLG().BuscaBestFit(Entrando.getTamanhoOrig());
+ 				if (getTipo_mem() == 3) {
+					if (bf_ret != null) {
+						if (bf_ret.getTamanhoOrig()!= Entrando.getTamanhoOrig()) {
+							MemSplit(bf_ret, Entrando);
+						}
+					}
+				}
 				if (bf_ret != null) {
 					No novo = Entrando.Entrega();
 					novo.setCor(1);
@@ -1276,7 +1315,16 @@ public class Desenhos extends JPanel {
 			getMemoriaLG().getHead().setAponta(getMemoria().getTail());
 			int tam = getMemoriaLG().getTamanho() - novoProc.getTamanhoOrig();
 			getMemoriaLG().setTamanho(tam);
+			
+			getMemoria().buscaID(novo.getID()).setTamanhoOrig(tam);
+			getMemoria().buscaID(novo.getID()).setTamanhoUsado(tam);
 			ret = getMemoriaLG().getHead();
+			No prox = getMemoria().buscaID(ret.getID()).getNext();
+			if(prox != null) {
+				if (prox.getCor() ==0) {
+					prox.setTamanhoUsado(tam);
+				}
+			}
 		}
 		return ret;
 	}
@@ -1412,6 +1460,10 @@ public class Desenhos extends JPanel {
 			System.out.println("Inicia 'desenhaListaMem()' .");
 		administraMemoria();
 
+		if (getTipo_mem() == 3) {
+			getMemoria().updTamanho();
+			getMemoriaLG().updTamanho();
+		}
 		Color cor_letra = Color.RED;
 		cor_letra = Color.BLACK;
 		

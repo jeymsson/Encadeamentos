@@ -102,6 +102,23 @@ public class Lista {
 			}
 		}
 	}
+	public void updTamanho() {
+		if (isEmpty()) {
+			System.out.println("imprime: Lista Vazia");
+		} else {
+			No temp = getHead();
+			System.out.println(getNomeLista());
+			while (temp != null) {
+				temp.setTamanhoOrig(temp.getTamanhoUsado());
+
+				if (temp.getNext() != null) {
+					temp = temp.getNext();
+				} else {
+					break;
+				}
+			}
+		}
+	}
 	public void imprimeMem() {
 		if (isEmpty()) {
 			System.out.println("imprime: Lista Vazia");
@@ -134,7 +151,7 @@ public class Lista {
 			System.out.println("ID.: '" + temp.getID());
 		}
 	}
-	public No buscaID(int ID) {
+	public No buscaID(double ID) {
 		No ret = null;
 		if (!isEmpty()) {
 			No temp = getHead();
@@ -427,7 +444,7 @@ public class Lista {
 		return rem;
 
 	}
-	public No pop_ID(int ID) {
+	public No pop_ID(double ID) {
 		No ret = null;
 		if(!isEmpty() && getHead() == getTail()) {
 			pop_fim();
@@ -497,30 +514,30 @@ public class Lista {
 		int auto_increment = 0;
 		if(!usaPrioridade) {
 			auto_increment++;
-			push_fim(6);
-			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(100);
-			push_fim(8);
-			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(200);
-			push_fim(8);
-			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(300);
-			push_fim(8);
-			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(400);
-			push_fim(8);
-			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(500);
-			push_fim(8);
-			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(500);
-			push_fim(8);
-			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(500);
-			push_fim(8);
-			getTail().setID(auto_increment++);
-			getTail().setTamanhoUsado(500);
+//			push_fim(6);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(100);
+//			push_fim(8);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(200);
+//			push_fim(8);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(300);
+//			push_fim(8);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(400);
+//			push_fim(8);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(500);
+//			push_fim(8);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(500);
+//			push_fim(8);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(500);
+//			push_fim(8);
+//			getTail().setID(auto_increment++);
+//			getTail().setTamanhoUsado(500);
 			push_fim(8);
 			getTail().setID(auto_increment++);
 			getTail().setTamanhoUsado(500);
